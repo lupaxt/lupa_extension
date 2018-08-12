@@ -1,0 +1,20 @@
+{
+  "short_name": "React App",
+  "name": "React Extension",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_popup": "index.html",
+    "default_title": "React Ext"
+  },
+  "version": "1.0",
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "css": ["/static/css/content.css"],
+      "js": ["/static/js/content.js"]
+    }
+  ]
+}
