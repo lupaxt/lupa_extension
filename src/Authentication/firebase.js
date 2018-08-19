@@ -1,16 +1,18 @@
 import firebase from 'firebase/app';
 import 'firebase/auth'
 
-const config = {
-    apiKey: "AIzaSyBbyPM-pBWaV_MVGqUm7C-F0BFyEMYBuKY",
-    authDomain: "oasys-create.firebaseapp.com",
-    databaseURL: "https://oasys-create.firebaseio.com",
-    projectId: "oasys-create",
-    storageBucket: "oasys-create.appspot.com",
-    messagingSenderId: "1087055758389"
+// Initialize Firebase
+var config = {
+    apiKey: "AIzaSyC9CAxlZsQ7jzHBl5YkbUHY0zGxCwhq-cc",
+    authDomain: "wisdom-c02f4.firebaseapp.com",
+    databaseURL: "https://wisdom-c02f4.firebaseio.com",
+    projectId: "wisdom-c02f4",
+    storageBucket: "wisdom-c02f4.appspot.com",
+    messagingSenderId: "1078468381731"
 };
 
 if (!firebase.apps.length) {
+    console.log(firebase, "firebase initialized")
   firebase.initializeApp(config);
 }
 

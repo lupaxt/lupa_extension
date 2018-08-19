@@ -16,9 +16,6 @@ import {
     Row
 } from 'reactstrap';
 import {CardHeader, Modal, ModalBody, ModalFooter, ModalHeader} from 'reactstrap';
-import api from '../api'
-import actions from "../store/actions";
-import {connect} from "redux-zero/react";
 
 const INITIAL_STATE = {
     email: "",
@@ -97,11 +94,12 @@ class Authentication extends Component {
             .then((cbData) => {
                 console.log("DATA FROM login", cbData)
                 that.setState({
-                    modalTitle: "Weclome to Oasys",
-                    modalBody: "You have been logged in successfully",
+                    modalTitle: "You're not a stranger anymore",
+                    modalBody: "You can now vote, provoke, comment on articles on the web",
                     showModal: "true",
                 })
-                that.props.onUpdateUserInfo(cbData);
+
+                // that.props.onUpdateUserInfo(cbData);
             })
             .catch(error => {
                 console.log("Error FROM login", error)
@@ -132,8 +130,14 @@ class Authentication extends Component {
                     auth.doUpdateProfile(that.state.username)
                         .then(function () {
                             that.setState({
-                                modalTitle: "Weclome to Oasys",
-                                modalBody: "Your account was created successfully",
+                                modalTitle: "Success",
+                                modalBody: `Hey, thanks for using my app.
+                                            Go join a group of thinkers. 
+                                            Whenever you come across an article (url) 
+                                            that somebody in the group rated or commented you
+                                            can see what they think about it.
+                                            (After you vote of course, to avoid group bias)
+                                `,
                                 showModal: "true",
                             })
                         })
@@ -249,7 +253,7 @@ class Authentication extends Component {
 
     getLoginView() {
         return (
-            <div className="app flex-row align-items-center">
+            <div className="app flex-row align-items-center" style={{minWidth: 400 + "px"}}>
                 <Container>
                     <Row className="justify-content-center">
                         <Col md="8">
@@ -300,9 +304,28 @@ class Authentication extends Component {
                                 <Card className="text-white bg-primary py-5 d-md-down-none" style={{width: 44 + '%'}}>
                                     <CardBody className="text-center">
                                         <div>
-                                            <h2>Welcome to Oasys</h2>
-                                            <p>Learn Science and Technology through experimentation and play! Oasys
-                                                makes it easy to create highly interactive educational content </p>
+                                            <h2>Good you are here. Thank you for using my new app – Markus</h2>
+                                            <p> * ) If you think: Wow a long intro text- this extension might not be your thing. It's made for readers.
+
+                                                * ) Join one of our 'reader groups' -- could be just a bunch of your friends interested in the same topics.
+                                                * ) When you come across an article (url, really) that was rated/commented by someone in that
+                                                group you'll see that
+                                                *) If you want so see/respond to their thoughts and ratings,
+                                                you have to rate too (to avoid group think).
+                                                *) If you just want to see other's opinions, you can,
+                                                but you won't be able to submit your own thoughts for this specific piece of content (url)--even not later on.
+                                                You can also do that without signing into your account, although: Don't be just a consumer!
+
+                                                *) I came up with this to connect friends and people through
+                                                their real (maybe intellectual) interests and to get the most diverse inputs without the
+                                                usual biases that come with seeing ratings up first or wanting to conform.
+                                                Another new idea is that all your thoughts on a piece won't get lost the day after in some chat feed,
+                                                because the thoughts show up exactly when someone comes across the place on the web (url).
+                                                Your efforts won't get lost with time. Time got abstracted out of the equation!
+
+                                                *) Important: Something you don't explicitly rate / comment will never be recognized by the software.
+                                                Data only gets stored when you submit. There is no background data processing going on otherwise.
+                                            </p>
                                             <Button color="primary" className="mt-3" active
                                                     onClick={this.RegisterClicked}>Get Started!</Button>
                                         </div>
@@ -504,11 +527,10 @@ class Authentication extends Component {
     }
 }
 
-const mapStoreToProps = ({user}) => ({user});
-const neededActions = (store) => {
-    const {onUpdateUserInfo} = actions();
-    return {onUpdateUserInfo}
-};
-// export default connect(mapStoreToProps, neededActions)(LessonMaker);
+// const mapStoreToProps = ({user}) => ({user});
+// const neededActions = (store) => {
+//     const {onUpdateUserInfo} = actions();
+//     return {onUpdateUserInfo}
+// };
 
-export default connect(mapStoreToProps, neededActions)(Authentication);
+export default Authentication;
