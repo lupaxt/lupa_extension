@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-import Button from './components/Button';
+import Button from './Button';
 // import '../style.css'
 import StarRatingComponent from 'react-star-rating-component'
 // import firebase from 'firebase'
@@ -24,8 +23,7 @@ import StarRatingComponent from 'react-star-rating-component'
 //     return false;
 // }
 
-
-class App extends React.Component {
+class Rater extends React.Component {
     constructor(props) {
         super();
 
@@ -41,7 +39,7 @@ class App extends React.Component {
                 Your App injected to DOM correctly!
                 <Button/>
                 <center style={{marginBottom: '40px', marginTop: '30px'}}>
-                    <Rate id={'rate123'} allowHalf value={3}/>
+                    {/*<Rate id={'rate123'} allowHalf value={3}/>*/}
                 </center>
                 {console.log('teoreore', this.state)}
                 {this.state.rated ? (
@@ -71,14 +69,4 @@ class App extends React.Component {
     }
 }
 
-
-injectApp();
-
-
-function injectApp() {
-    const newDiv = document.createElement("div");
-    newDiv.setAttribute("id", "markusExtend");
-    // newDiv.setAttribute("class", "wiz special swag");
-    document.body.appendChild(newDiv);
-    ReactDOM.render(<App/>, newDiv);
-}
+export default Rater;

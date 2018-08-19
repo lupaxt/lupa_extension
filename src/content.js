@@ -1,20 +1,7 @@
 import "./content.css";
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
-const container = document.getElementById('root');
-console.log(container, 'root');
-
-class Popper extends Component {
-    render() {
-        return (
-            <div>
-                <pre>HELLO </pre>
-            </div>
-        );
-    }
-}
-
-export {Popper}
+import Rater from './components/Rater'
 
 console.log('HHHEEEYoooo')
 
@@ -25,6 +12,6 @@ function injectApp() {
     newDiv.setAttribute("id", "markusExtend");
     // newDiv.setAttribute("class", "wiz special swag");
     document.body.appendChild(newDiv);
-    ReactDOM.render(<Popper/>, newDiv);
+    ReactDOM.render(<Rater/>, newDiv);
 }
 
