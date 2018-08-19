@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Button from './Button';
 // import '../style.css'
 import StarRatingComponent from 'react-star-rating-component'
 // import firebase from 'firebase'
@@ -36,8 +35,7 @@ class Rater extends React.Component {
     render() {
         return (
             <div>
-                Your App injected to DOM correctly!
-                <Button/>
+                Your App!
                 <center style={{marginBottom: '40px', marginTop: '30px'}}>
                     {/*<Rate id={'rate123'} allowHalf value={3}/>*/}
                 </center>
