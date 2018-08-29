@@ -1,5 +1,5 @@
-import firebase from 'firebase/app';
-import 'firebase/auth'
+import firebase from 'firebase';
+// import 'firebase/auth'
 
 // Initialize Firebase
 var config = {
@@ -16,9 +16,22 @@ if (!firebase.apps.length) {
   firebase.initializeApp(config);
 }
 
+const isFirebaseSetup = function() {
+    if (!window.firebase || !(firebase.app instanceof Function) || !firebase.app().options) {
+        window.alert('You have not configured and imported the Firebase SDK. ' +
+            'Make sure you go through the codelab setup instructions and make ' +
+            'sure you are running the codelab using `firebase serve`');
+    }
+    return false;
+}
+
 const auth = firebase.auth();
+const DB = firebase.database().ref()
+
+window.DB = DB;
+window.auth = auth;
 
 export {
-  auth,
+  auth, DB, isFirebaseSetup
 };
 

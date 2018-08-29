@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
-import * as auth from './auth';
+// import * as auth from './auth';
+import {auth} from './firebase';
 import {
     Button,
     Card,
@@ -90,8 +91,8 @@ class Authentication extends Component {
 
     LoginSubmitted() {
         const that = this;
-        auth.doSignInWithEmailAndPassword(that.state.email, that.state.password)
-            .then((cbData) => {
+        auth.signInWithEmailAndPassword(that.state.email, that.state.password)
+            .then(cbData => {
                 console.log("DATA FROM login", cbData)
                 that.setState({
                     modalTitle: "You're not a stranger anymore",
@@ -122,12 +123,13 @@ class Authentication extends Component {
             });
         }
         else {
-            let that = this;
-            auth.doCreateUserWithEmailAndPassword(that.state.email, that.state.password)
+            const that = this;
+            auth.createUserWithEmailAndPassword(that.state.email, that.state.password)
                 .then(authUser => {
-                    console.log(authUser, 'authuser')
-                    auth.doGetIdToken();
-                    auth.doUpdateProfile(that.state.username)
+                    const currentUserID = auth.currentUser.uid;
+                    console.log(authUser, currentUserID, "ID",'authuser')
+
+                    auth.currentUser.updateProfile({displayName: that.state.username})
                         .then(function () {
                             that.setState({
                                 modalTitle: "Success",
@@ -160,7 +162,7 @@ class Authentication extends Component {
     }
 
     ForgotPasswordSubmitted() {
-        auth.doPasswordReset(this.state.email)
+        auth.sendPasswordResetEmail(this.state.email)
         //SUCCESS
             .then(() => {
                 this.setState({
@@ -182,9 +184,9 @@ class Authentication extends Component {
 
     ResetPasswordSubmitted() {
         let that = this;
-        auth.doSignInWithEmailAndPassword(this.state.email, this.state.previousPassword)
+        auth.signInWithEmailAndPassword(this.state.email, this.state.previousPassword)
             .then(function (user) {
-                auth.doPasswordUpdate(this.state.password)
+                auth.currentUser.updatePassword(this.state.password)
                     .then(function () {
                         that.setState({
                             modalTitle: "Success",

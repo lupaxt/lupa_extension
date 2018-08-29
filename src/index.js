@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Popup from './components/Popup';
-import Authentication from './Authentication/Authentication';
+import Popup from './Popup';
 import registerServiceWorker from './registerServiceWorker';
 
 
@@ -13,5 +12,5 @@ import "./styles/coreui/coreui.css"
 import './styles/index.css';
 
 
-ReactDOM.render(<Authentication />, document.getElementById('root'));
+ReactDOM.render(<Popup />, document.getElementById('root'));
 registerServiceWorker();
