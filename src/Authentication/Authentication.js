@@ -358,7 +358,7 @@ class Authentication extends Component {
                                                     <i className="icon-user"></i>
                                                 </InputGroupText>
                                             </InputGroupAddon>
-                                            <Input type="text" placeholder="Username" autoComplete="username"
+                                            <Input type="text" placeholder="displayname" autoComplete="displayname"
                                                    onChange={this.updateUsername}/>
                                         </InputGroup>
                                         <InputGroup className="mb-3">

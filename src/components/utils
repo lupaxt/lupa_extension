@@ -1,0 +1,30 @@
+import Readability from 'readability-node'
+
+
+
+const documentClone = document.cloneNode(true);
+const article = new Readability(documentClone).parse();
+
+
+
+const onVisitContent = function(content){
+    api.didUserReview();
+    api.didGroupsReview();
+}
+
+const api = {
+
+    didUserReview(content) {
+
+    },
+
+    didGroupsReview(content){},
+
+    upsertReview(review, userid) {
+
+
+        //post review in reviews
+        //.then push id ref to user
+        //.then push id ref to content
+    }
+}
