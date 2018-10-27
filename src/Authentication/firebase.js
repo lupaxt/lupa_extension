@@ -26,12 +26,10 @@ const isFirebaseSetup = function() {
 }
 
 const auth = firebase.auth();
-const DB = firebase.database().ref()
 
-window.DB = DB;
-window.auth = auth;
+//window.auth = auth;
 
 export {
-  auth, DB, isFirebaseSetup
+  auth, isFirebaseSetup
 };
 

@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 // import * as auth from './auth';
+import api from '../api'
 import {auth} from './firebase';
+import isEmpty from 'is-empty';
 import {
     Button,
     Card,
@@ -31,6 +33,7 @@ class Authentication extends Component {
         super(props);
         this.state = {...INITIAL_STATE};
         this.state = {
+            hasHandle: false,
             currentView: "",
             showModal: false,
             modalTitle: "",
@@ -56,6 +59,7 @@ class Authentication extends Component {
 
         this.closeModal = this.closeModal.bind(this)
         this.goHome = this.goHome.bind(this)
+        this.checkHandle = this.checkHandle.bind(this)
 
     }
 
@@ -91,16 +95,17 @@ class Authentication extends Component {
 
     LoginSubmitted() {
         const that = this;
-        auth.signInWithEmailAndPassword(that.state.email, that.state.password)
-            .then(cbData => {
-                console.log("DATA FROM login", cbData)
+        api.fiba.loginUser({userEmail: that.state.email, password: that.state.password})
+            .then(user => {
+                console.log("DATA FROM login", user)
                 that.setState({
                     modalTitle: "You're not a stranger anymore",
                     modalBody: "You can now vote, provoke, comment on articles on the web",
                     showModal: "true",
                 })
 
-                // that.props.onUpdateUserInfo(cbData);
+                api.get.user(user.user.uid)
+                    .then(user => console.log("USER FROM BACKEND", user))
             })
             .catch(error => {
                 console.log("Error FROM login", error)
@@ -113,52 +118,68 @@ class Authentication extends Component {
 
     }
 
+    setHandle(handle) {
+        const that = this;
 
-    RegisterSubmitted() {
-        if (this.state.username.indexOf('-') > -1) {
-            this.setState({
-                modalTitle: "Error",
-                modalBody: "Usernames cannot contain hyphens (-)",
-                showModal: "true",
-            });
-        }
-        else {
-            const that = this;
-            auth.createUserWithEmailAndPassword(that.state.email, that.state.password)
-                .then(authUser => {
-                    const currentUserID = auth.currentUser.uid;
-                    console.log(authUser, currentUserID, "ID",'authuser')
-
-                    auth.currentUser.updateProfile({displayName: that.state.username})
-                        .then(function () {
-                            that.setState({
-                                modalTitle: "Success",
-                                modalBody: `Hey, thanks for using my app.
+        api.set.handle(handle)
+            .then(function (handle) {
+                that.setState({
+                    modalTitle: "Success " + handle,
+                    modalBody: `Hey, thanks for using my app.
                                             Go join a group of thinkers. 
                                             Whenever you come across an article (url) 
                                             that somebody in the group rated or commented you
                                             can see what they think about it.
                                             (After you vote of course, to avoid group bias)
                                 `,
-                                showModal: "true",
-                            })
-                        })
-                        .catch(function (error) {
-                            that.setState({
-                                modalTitle: "Error",
-                                modalBody: error.message,
-                                showModal: "true",
-                            });
-                        });
+                    showModal: "true",
+                    hasHandle: true,
                 })
-                .catch(function (error) {
-                    that.setState({
-                        modalTitle: "Error",
-                        modalBody: error.message,
-                        showModal: "true",
-                    });
-                })
+            })
+            .catch(function (error) {
+                that.setState({
+                    modalTitle: "That won't work",
+                    modalBody: error.message,
+                    showModal: "true",
+                });
+            });
+    }
+
+    async RegisterSubmitted() {
+        const that = this;
+
+        let matchedHandle;
+        try {
+            matchedHandle = await api.get.handle(this.state.handle);
+        } catch (e) {
+            console.log(e)
+            return
         }
+        if (!isEmpty(matchedHandle)) {
+            console.log('canceled register')
+            that.setState({
+                modalTitle: "This Handle is Taken",
+                modalBody: "Pick another handle",
+                showModal: "true",
+            });
+            return;
+        }
+        auth.createUserWithEmailAndPassword(that.state.email, that.state.password)
+            .then(authUser => {
+                console.log('auth user', authUser)
+                const firebaseUID = authUser.user.uid;
+                api.set.saveUserBackend({userEmail: that.state.email, firebaseUID, handle:this.state.handle})
+                    .then(res => that.setState({currentView: that.getHandleView()}))
+                    .catch(err => "User was created in Firebase but not in our backend")
+            })
+            .catch(err => {
+                console.log(err, " from update profile")
+                that.setState({
+                    modalTitle: "Error",
+                    modalBody: err.message,
+                    showModal: "true",
+                });
+            })
     }
 
     ForgotPasswordSubmitted() {
@@ -303,36 +324,7 @@ class Authentication extends Component {
                                         </Form>
                                     </CardBody>
                                 </Card>
-                                <Card className="text-white bg-primary py-5 d-md-down-none" style={{width: 44 + '%'}}>
-                                    <CardBody className="text-center">
-                                        <div>
-                                            <h2>Good you are here. Thank you for using my new app – Markus</h2>
-                                            <p> * ) If you think: Wow a long intro text- this extension might not be your thing. It's made for readers.
 
-                                                * ) Join one of our 'reader groups' -- could be just a bunch of your friends interested in the same topics.
-                                                * ) When you come across an article (url, really) that was rated/commented by someone in that
-                                                group you'll see that
-                                                *) If you want so see/respond to their thoughts and ratings,
-                                                you have to rate too (to avoid group think).
-                                                *) If you just want to see other's opinions, you can,
-                                                but you won't be able to submit your own thoughts for this specific piece of content (url)--even not later on.
-                                                You can also do that without signing into your account, although: Don't be just a consumer!
-
-                                                *) I came up with this to connect friends and people through
-                                                their real (maybe intellectual) interests and to get the most diverse inputs without the
-                                                usual biases that come with seeing ratings up first or wanting to conform.
-                                                Another new idea is that all your thoughts on a piece won't get lost the day after in some chat feed,
-                                                because the thoughts show up exactly when someone comes across the place on the web (url).
-                                                Your efforts won't get lost with time. Time got abstracted out of the equation!
-
-                                                *) Important: Something you don't explicitly rate / comment will never be recognized by the software.
-                                                Data only gets stored when you submit. There is no background data processing going on otherwise.
-                                            </p>
-                                            <Button color="primary" className="mt-3" active
-                                                    onClick={this.RegisterClicked}>Get Started!</Button>
-                                        </div>
-                                    </CardBody>
-                                </Card>
                             </CardGroup>
                         </Col>
                     </Row>
@@ -354,12 +346,18 @@ class Authentication extends Component {
                                         <p className="text-muted">Create your account</p>
                                         <InputGroup className="mb-3">
                                             <InputGroupAddon addonType="prepend">
-                                                <InputGroupText>
-                                                    <i className="icon-user"></i>
-                                                </InputGroupText>
+                                                <InputGroupText>@</InputGroupText>
                                             </InputGroupAddon>
-                                            <Input type="text" placeholder="displayname" autoComplete="displayname"
-                                                   onChange={this.updateUsername}/>
+                                            <Input type="text" placeholder="Your unique Handle" autoComplete="handle"
+                                                   onChange={(ev) => this.setState({handle: ev.target.value})}
+                                            />
+                                            <Button color="primary" className="px-4" block
+                                                    onClick={this.checkHandle}>Check if free
+                                            </Button>
+                                            {/*<Button color="primary" className="px-4" block*/}
+                                            {/*onClick={this.setHandle}>Submit*/}
+                                            {/*</Button>*/}
+                                            {/*<div>Handle is {this.state.isHandleFree ? "free :-)" : "taken :-("}</div>*/}
                                         </InputGroup>
                                         <InputGroup className="mb-3">
                                             <InputGroupAddon addonType="prepend">
@@ -405,6 +403,54 @@ class Authentication extends Component {
             </div>
         )
     }
+
+    checkHandle() {
+        if (this.state.handle.indexOf('-') > -1) {
+            this.setState({
+                modalTitle: "Error",
+                modalBody: "Usernames cannot contain hyphens (-)",
+                showModal: "true",
+            });
+        }
+        else {
+            console.log(isEmpty([]), 'isempty check')
+            api.get.handle(this.state.handle)
+                .then(res => {
+                    console.log(this, isEmpty(res), res);
+                    this.setState({isHandleFree: isEmpty(res)})
+                    this.setState({
+                        modalTitle: "Handle is",
+                        modalBody: isEmpty(res) ? "FREE ;-)" : "TAKEN :-(",
+                        showModal: "true",
+                    });
+                })
+                .catch(err => console.log("Handle something not free or error", err))
+        }
+
+    }
+
+    //
+    // getHandleView() {
+    //     return (
+    //         <div className="app flex-row align-items-center">
+    //             <InputGroup className="mb-3">
+    //                 <InputGroupAddon addonType="prepend">
+    //                     <InputGroupText>@</InputGroupText>
+    //                 </InputGroupAddon>
+    //                 <Input type="text" placeholder="Your unique Handle" autoComplete="handle"
+    //                        onChange={(ev) => this.setState({handle: ev.target.value})}
+    //                 />
+    //                 <Button color="primary" className="px-4" block
+    //                         onClick={this.checkHandle}>Check if free
+    //                 </Button>
+    //                 <Button color="primary" className="px-4" block
+    //                         onClick={this.setHandle}>Submit
+    //                 </Button>
+    //                 <div>Handle is {this.state.isHandleFree ? "free :-)" : "taken :-("}</div>
+    //             </InputGroup>
+    //         </div>
+    //     )
+    // }
 
     getForgotPasswordView() {
         return (
@@ -528,11 +574,5 @@ class Authentication extends Component {
         )
     }
 }
-
-// const mapStoreToProps = ({user}) => ({user});
-// const neededActions = (store) => {
-//     const {onUpdateUserInfo} = actions();
-//     return {onUpdateUserInfo}
-// };
 
 export default Authentication;

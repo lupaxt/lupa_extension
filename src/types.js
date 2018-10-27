@@ -7,6 +7,7 @@ import uuidv4 from 'uuid/v4';
 
 const struct = superstruct({
     types: {
+        //firebase handles email legitness usually
         email: value => isEmail(value) && value.length < 256,
         uuid: value => isUuid.v4(value),
         displayName: value => typeof value === 'string' && value.length > 3,
@@ -18,11 +19,11 @@ const struct = superstruct({
 const User = struct({
     id: 'uuid',
 
-    name: 'displayName',
-    token: 'string',
+    handle: 'displayName',
+    firebaseUID: 'string',
     groups: ['uuid'],
     reviews: ['uuid'],
-    contents: ['uuid']
+    // contents: ['uuid']
 })
 
 const Group = struct({

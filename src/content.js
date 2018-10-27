@@ -5,7 +5,7 @@ import Rater from './components/Rater'
 
 console.log('HHHEEEYoooo')
 
-injectApp()
+// injectApp()
 
 function injectApp() {
     const newDiv = document.createElement("div");

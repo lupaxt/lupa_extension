@@ -1,23 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM, {findDOMNode} from 'react-dom';
 // import '../style.css'
-import StarRatingComponent from 'react-star-rating-component'
-import {DB, auth} from "../Authentication/firebase";
+// import StarRatingComponent from 'react-star-rating-component'
+import {auth} from "../Authentication/firebase";
+import ReactTooltip from 'react-tooltip';
+import api from '../api'
+import {ToastContainer, toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {Button} from 'reactstrap'
 
-
-//TODO abstract star component
-//TODO post and fetch from FiBa API
-//TODO emoji rating bar
-//TODO commenting on content or even text on a page -- eg kindle reader snippets
-//TODO add tooltip to Rating Component
-//TODO make Rater removable on some pages
-
-
-/*
-TODO FLOW
-TODO LOGINED / REGISTERED / GO BACK BUTTON @ AUTHstate
-TODO GROUP VIEW
- */
 
 /*TODO API
 TODO DELETE RATING, ADD RATING, CHANGE RATING for URL
@@ -25,134 +16,245 @@ TODO ON RATING --> PARSE URL -->UPDATE ALL RATINGS FOR THIS URL
 TODO
 */
 
-const wisData = {
-    users: {
-        ['someUID']: {
-            urlsRead: {
-                url: {
-                    rating: 0, // 0 === deleted
-                    //0 - 5
-                    emotions: ['emojiArray'],
-                    thoughts: "I think this arctile is a piece of donkey shit lalaladi"
-                },
-                anotherUrl: {}
-            }
-        }
-    }
-};
-
-
-console.log(auth, "auth", auth.currentUser)
-console.log(DB, "DB")
-// const USERID = auth.currentUser.uid;
-const URL = window.location.href;
-
-DB.child('contents').once('value', snapShot => {
-    const contents = snapShot.val();
-    console.log("contents", contents)
-    },
-    err => console.log(err)
-);
-// content.once('value',
-//     snapShot => console.log("getting this value once", snapShot.val()),
-//     err => console.log(err)
-// );
-
-// const newPostKey = firebase.database().ref().child('content').push().key;
-// console.log(newPostKey, 'new key');
-
-
 const styling = {
     container: {
         position: 'fixed',
-        bottom: 0,
-        right: 0,
+        bottom: 10,
+        left: 10,
+        // right: 0,
         zIndex: 999999,
         // background: "black",
-        fontSize: 12 + 'px',
-        height: 10 + 'vh',
-        width: 10 + 'vw'
-    }
+        fontSize: 14 + 'px',
+        // height: 10 + 'vh',
+        // width: 10 + 'vw'
+    },
+    lupa: {
+        background: "DarkTurquoise",
+        fontSize: 1 + 'em',
+        color: "white",
+        fontWeight: 'bold',
+        width: 2.5 + 'rem',
+        height: 2.5 + 'rem'
+    },
+    clickBar: {
+        background: "DarkTurquoise",
+        fontSize: 1 + 'em',
+        color: "white",
+        fontWeight: 'bold',
+    },
+
+    emojiBox: {
+        width: 2.5 + 'rem',
+        height: 2.5 + 'rem',
+    },
 }
+const emojiBox_selected = Object.assign({}, styling.emojiBox, {background: "DarkTurquoise"})
+
+/*https://unicode.org/emoji/charts/full-emoji-list.html*/
+const emojis = [ //U+ ==> 0x
+    [
+        {name: "ok_hand", code: 0x1F44C},
+        {name: "astonished_face", code: 0x1F632},
+        {name: "grinning_face_big_eyes", code: 0x1F603},
+        {name: "thumbs_up", code: 0x1F44D},
+        {name: "thinking_face", code: 0x1F914},
+        {name: "brain", code: 0x1F9E0},
+    ], [
+        //SPECIFIC
+        {name: "dizzy_face", code: 0x1F635},
+        {name: "face_with_raised_eyebrows", code: 0x1F928},
+        {name: "unamused_face", code: 0x1F612},
+        {name: "lying_face", code: 0x1F925},
+        {name: "mind_blown", code: 0x1F92F},
+        {name: "face_screaming_in_fear", code: 0x1F631},
+    ], [
+        {name: "thumbs_down", code: 0x1F44E},
+        {name: "angry_face", code: 0x1F620},
+        {name: "cursing_face", code: 0x1F92C},
+        {name: "nauseated_face", code: 0x1F922},
+        {name: "face_vomitting", code: 0x1F92E},
+    ], [
+        {name: "Bullshit", code: 0x1F4A9},
+        {name: "warning: SCAM!", code: 0x26A0}, //BS
+    ]
+]
 
 class Rater extends React.Component {
     constructor(props) {
         super();
 
         this.state = {
-            rating: 0,
-            rated: false,
-            commentSubmitted: false,
-            comment: "...",
-        }
-    }
-
-    onRemoveRate() {
-        //
-    }
-
-    onRate(rating) {
-        const shouldReset = ( this.state.rating === rating );
-        //just for UI
-        this.setState({
-            rating: shouldReset ? 0 : rating,
-            rated: true
-        })
-
-        if (shouldReset) {
-            //TODO DB.delete rating for user for content
-            //utility functions
-        } else {
-            //TODO DB.set rating for user for content
+            // rating: 0,
+            // emoji_selected: false,
+            contentReviews: [],
+            hasReviewed: false,
+            comment: null,
+            emoji: null,
+            title: null,
+            docInfo: {
+                title_guess: null
+            },
+            showReviewMenu: false,
         }
 
+        this.saveReview = this.saveReview.bind(this)
     }
 
-    onComment() {
-        //TODO
+    saveReview() {
+        const uid = auth.currentUser.uid
+
+        api.get.user(uid)
+            .then(user => {
+                console.log(user, "user")
+                const review = {
+                    comment: this.state.comment,
+                    emoji: this.state.emoji.toString(),
+                    emoji_name: this.state.emoji_name,
+                    title: this.state.title,
+                    url: document.location.href,
+                    firebaseUID: uid,
+                    handle: user[0].handle,
+                }
+
+                api.set.review(review)
+                    .then(res => {
+                        toast(String.fromCodePoint(0x1F64C) + "    Saved!   " + String.fromCodePoint(0x1F389))
+                        this.setState({showReviewMenu: false})
+                    })
+                    .catch(error => {
+                        console.log(error, "at .get.user @ submitting review")
+                    })
+
+            })
     }
 
-    onRemoveComment() {
+    componentDidMount() {
+        api.get.reviewsWithKeyValuePair({key: "url", value: document.location.href})
+            .then(reviews => {
+                this.setState({contentReviews: reviews})
+
+                //auth.currentUser
+                if (true) {
+                    const uid = auth.currentUser ? auth.currentUser.uid : null || "lnRuVG4hKYMJd7To0KGBkFUBEzl2"
+                    const userReview = reviews.find(r => r.firebaseUID === uid);
+
+                    //prefill state if user has review this URL before
+
+                    if (userReview) {
+                        this.setState({
+                            comment: userReview.comment,
+                            emoji: userReview.emoji,
+                            hasReviewed: true,
+                            title: userReview.title
+                        })
+                    }
+                }
+            })
+            .catch(err => console.log(err, "error"))
 
     }
 
+
+    guessDocInfo() {
+        const url = document.location.href;
+        api.set.docInfo(url, false)
+            .then(info => this.setState({docInfo: {title_guess: info.title}}))
+            .catch(err => console.log(err, "error at docinfo"))
+    }
+
+    emoji_selected(emoji_code, emoji_name) {
+        console.log(emoji_code)
+        this.setState({emoji: emoji_code})
+        this.setState({emoji_name: emoji_name})
+    }
 
     render() {
         return (
-            <React.Fragment>
-                <section style={styling.container}>
-                    <p style={{fontSize: '8px'}}>
-                        No articles on this page? Forgive me, I still have to write the code that decides if to hide
-                        this
-                        footer when it's not needed
-                    </p>
+            <section style={styling.container}>
+                <ToastContainer/>
 
-                    {this.state.rated &&
-                    <React.Fragment>
-                    <textarea onChange={(ev) => console.log('val', ev.target.value)}
-                              placeholder="Now, how do you really feel?"
-                              cols="30" rows="5"/>
-                        <button>Comment ✅</button>
-                    </React.Fragment>}
+                <div style={{background: "orange", color: "white", fontWeight: "bold", textAlign: "center"}}>
+                    {this.state.contentReviews.filter(review => review.url === document.location.href).length}
+                </div>
 
-                    {this.state.rated &&
-                    <button onClick={() => {
-                        this.setState({rated: false, rating: 0});
-                    }}>Reset rating for this piece
-                    </button>}
+                <Button onClick={() => {
+                    this.setState({showReviewMenu: !this.state.showReviewMenu});
+                    this.guessDocInfo();
+                }}
+                        style={styling.lupa}> {this.state.showReviewMenu ? " __" : "L"}
+                </Button>
 
-                </section>
 
-                    <StarRatingComponent
-                        name="rate1" starCount={5}
-                        editing={true} value={this.state.rating}
-                        onStarHover={(rating) => this.state.rated ? null : this.setState({rating: rating})}
-                        onStarClick={this.onRate}
-                    />
-                Your App!
-            </React.Fragment>
+                {!auth.currentUser
+                    ? this.state.showReviewMenu &&
+                    <div style={styling.clickBar}>LogIn (@ Extension Popup) to place an opinion</div>
+                    :
+                    <section
+                        style={{display: this.state.showReviewMenu ? "flex" : "none", flexDirection: 'column'}}>
+
+                        <Button style={styling.clickBar} onClick={this.saveReview}> SAVE
+                            THOUGHT {String.fromCharCode(0x270C)}</Button>
+                        {/*{this.state.docInfo.title_guess &&*/}
+                        {/*<div>*/}
+                        {/*<section style={Object.assign({}, styling.clickBar, {fontSize: 12})}>*/}
+                        {/*I'm guessing <div style={{background: "Coral"}}> {this.state.docInfo.title_guess} </div> is the title?*/}
+                        {/*<Button onClick={() => this.setState({title: this.state.docInfo.title_guess})}> {String.fromCodePoint(0x1F44C)} Yep</Button>*/}
+                        {/*<Button onClick={() => this.setState({title: null})}> {String.fromCodePoint(0x1F44C)} Nope</Button>*/}
+                        {/*</section>*/}
+                        {/*</div>}*/}
+
+                        <textarea onChange={(ev) => this.setState({comment: ev.target.value})}
+                                  value={this.state.comment}
+                                  placeholder={this.state.comment || `${String.fromCodePoint(0x1F449)} How do you feel about this article | video | product | whatever ? `}
+                                  cols="20" rows="5"
+                        />
+                        <section>
+                            {emojis
+                                .map(emoji_category =>
+                                    <section>
+                                        {emoji_category.map(e =>
+                                            <Button ref={e.name} data-tip={e.name}
+                                                    onHover={() => ReactTooltip.show(findDOMNode(this.refs.e['name']))}
+                                                    style={e.code === this.state.emoji ? emojiBox_selected : styling.emojiBox}
+                                                    onClick={() => e.code === this.state.emoji ? this.setState({emoji: null}) : this.emoji_selected(e.code, e.name)}>
+                                                {String.fromCodePoint(e.code)}
+                                                <ReactTooltip/>
+                                            </Button>
+                                        )}
+                                    </section>
+                                )}
+                        </section>
+                    </section>
+                }
+            </section>
         )
     }
+}
+
+{
+    /*<StarRatingComponent*/
+}
+
+{/*name="rate1" starCount={5}*/
+}
+{/*editing={true} value={this.state.rating}*/
+}
+{/*onStarHover={(rating) => this.state.emoji_selected ? null : this.setState({rating: rating})}*/
+}
+{/*onStarClick={this.onRate}*/
+}
+{/*/>*/
+}
+
+{/*{this.state.emoji_selected &&*/
+}
+{/*<button onClick={() => {*/
+}
+{/*this.setState({emoji_selected: false, rating: 0});*/
+}
+{/*}}>Reset rating for this piece*/
+}
+{/*</button>}*/
 }
 
 export default Rater;
