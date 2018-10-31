@@ -1,9 +1,12 @@
 import React, {Component} from 'react';
 import Authentication from './Authentication/Authentication';
+import {auth} from './Authentication/firebase';
 import isEmpty from 'is-empty'
 import './App.css';
 import About from './components/About'
 import Activity from './components/Activity'
+/*global chrome*/
+
 
 import {
     Button,
@@ -13,6 +16,9 @@ import api from "./api";
 //TODO display Section reader groups joined
 //TODO --> onclick see members or 'expand'
 //TODO display Sectionexplore reader groups
+
+
+window.auth = auth;
 
 const Groups = (props) => {
     return (
@@ -34,6 +40,13 @@ class Popup extends Component {
         allReviews: [],
     }
 
+    testChrome(){
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            const activeTab = tabs[0];
+            chrome.tabs.sendMessage(activeTab.id, {"uid": "125135235313"});
+        })
+    }
+
     componentDidMount(){
         api.get.allReviews()
             .then(reviews => {
@@ -52,6 +65,7 @@ class Popup extends Component {
                     : (<React.Fragment>
                             <Button onClick={() => this.setState({view: <About/>})}>About</Button>
                             <Button onClick={() => this.setState({view: <Activity reviews={this.state.allReviews}/>})}>Activity</Button>
+                            <Button onClick={() => auth.signOut()}>Sign Out</Button>
                             {/*<Button>Your Groups (disabled) - coming soon</Button>*/}
                         </React.Fragment>
                     )

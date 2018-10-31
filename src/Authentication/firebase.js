@@ -1,5 +1,5 @@
-import firebase from 'firebase';
-// import 'firebase/auth'
+import firebase from 'firebase/app';
+import 'firebase/auth'
 
 // Initialize Firebase
 var config = {
@@ -30,6 +30,6 @@ const auth = firebase.auth();
 //window.auth = auth;
 
 export {
-  auth, isFirebaseSetup
+  auth
 };
 

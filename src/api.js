@@ -10,6 +10,7 @@ let idToken = "notoken";
 // api.loginUser({userEmail: 'markus.awesome@gmail.com', password: 'jesus2008'}).then(res => console.log("HAA", res))
 
 const api = {
+    getAuthUser: () => theUser || "not yet",
     fiba: {
         signOut: () => auth.signOut(),
         loginUser: ({userEmail, password}) => auth.signInWithEmailAndPassword(userEmail, password)
@@ -53,7 +54,7 @@ const reviewEx = {
     handle: "greatPerson",
     title: "How YOU is 8",
     comment: "FFSS",
-    emoji: 0x1F596
+    emoji: "0x1F596"
     // rating: 3
 }
 
@@ -104,10 +105,14 @@ const post = function (url, data = {}, idToken = idToken) {
         })
 };
 
+
+let theUser;
 auth.onAuthStateChanged(function (user) {
     if (user) {
         console.log("USER Logged IN", user)
-        window.myUser = user
+        window.myUser = user;
+        theUser=user;
+
         user.getIdToken(true)
             .then(function (token) {
                 idToken = token;
@@ -118,6 +123,7 @@ auth.onAuthStateChanged(function (user) {
         window.myUser = "nope"
     }
 });
+
 
 //make standardWrapper Promise for catch and then
 

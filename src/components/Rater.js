@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM, {findDOMNode} from 'react-dom';
 // import '../style.css'
 // import StarRatingComponent from 'react-star-rating-component'
-import {auth} from "../Authentication/firebase";
+// import {auth} from "../Authentication/firebase";
 import ReactTooltip from 'react-tooltip';
 import api from '../api'
 import {ToastContainer, toast} from 'react-toastify';
@@ -97,11 +97,16 @@ class Rater extends React.Component {
             showReviewMenu: false,
         }
 
+        // api.get.allReviews()
+        //     .then(rev => console.log('reviews', rev))
+        //     .catch(err => console.log('error', err))
+
         this.saveReview = this.saveReview.bind(this)
     }
 
     saveReview() {
-        const uid = auth.currentUser.uid
+        const uid = this.props.uid;
+        console.log(uid, "UID");
 
         api.get.user(uid)
             .then(user => {
@@ -135,7 +140,8 @@ class Rater extends React.Component {
 
                 //auth.currentUser
                 if (true) {
-                    const uid = auth.currentUser ? auth.currentUser.uid : null || "lnRuVG4hKYMJd7To0KGBkFUBEzl2"
+                    const uid = this.props.uid || null;
+                    // const uid = auth.currentUser ? auth.currentUser.uid : null || "lnRuVG4hKYMJd7To0KGBkFUBEzl2"
                     const userReview = reviews.find(r => r.firebaseUID === uid);
 
                     //prefill state if user has review this URL before
@@ -185,7 +191,7 @@ class Rater extends React.Component {
                 </Button>
 
 
-                {!auth.currentUser
+                {!this.props.uid
                     ? this.state.showReviewMenu &&
                     <div style={styling.clickBar}>LogIn (@ Extension Popup) to place an opinion</div>
                     :
