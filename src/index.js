@@ -2,6 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Popup from './Popup';
+import {auth} from "./Authentication/firebase";
 // import registerServiceWorker from './registerServiceWorker';
 
 //CSS STYLESHEETS
@@ -16,6 +17,9 @@ chrome.runtime.sendMessage({user: true}, function(response) {
     const user = response.user.uid;
     ReactDOM.render(<Popup user={user}/>, document.getElementById('root'));
 });
+
+//for registering / logout transission
+auth.onAuthStateChanged(user => ReactDOM.render(<Popup user={user}/>, document.getElementById('root')))
 
 ReactDOM.render(<Popup user={null}/>, document.getElementById('root'));
 //blocks request sheme

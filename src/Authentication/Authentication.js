@@ -169,7 +169,13 @@ class Authentication extends Component {
                 console.log('auth user', authUser)
                 const firebaseUID = authUser.user.uid;
                 api.set.saveUserBackend({userEmail: that.state.email, firebaseUID, handle:this.state.handle})
-                    .then(res => that.setState({currentView: that.getHandleView()}))
+                    .then(res => {
+                        that.setState({
+                            modalTitle: "Success",
+                            modalBody: "You have an account now. Good",
+                            showModal: "true",
+                        });
+                    })
                     .catch(err => "User was created in Firebase but not in our backend")
             })
             .catch(err => {
@@ -429,29 +435,6 @@ class Authentication extends Component {
 
     }
 
-    //
-    // getHandleView() {
-    //     return (
-    //         <div className="app flex-row align-items-center">
-    //             <InputGroup className="mb-3">
-    //                 <InputGroupAddon addonType="prepend">
-    //                     <InputGroupText>@</InputGroupText>
-    //                 </InputGroupAddon>
-    //                 <Input type="text" placeholder="Your unique Handle" autoComplete="handle"
-    //                        onChange={(ev) => this.setState({handle: ev.target.value})}
-    //                 />
-    //                 <Button color="primary" className="px-4" block
-    //                         onClick={this.checkHandle}>Check if free
-    //                 </Button>
-    //                 <Button color="primary" className="px-4" block
-    //                         onClick={this.setHandle}>Submit
-    //                 </Button>
-    //                 <div>Handle is {this.state.isHandleFree ? "free :-)" : "taken :-("}</div>
-    //             </InputGroup>
-    //         </div>
-    //     )
-    // }
-
     getForgotPasswordView() {
         return (
             <div className="app flex-row align-items-center">
@@ -566,8 +549,8 @@ class Authentication extends Component {
                         {this.state.modalBody}
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="secondary" onClick={this.closeModal}>Close</Button>
-                        <Button color="primary" onClick={this.goHome}>Home</Button>
+                        <Button color="secondary" onClick={this.closeModal}>OK</Button>
+                        {/*<Button color="primary" onClick={this.goHome}>Home</Button>*/}
                     </ModalFooter>
                 </Modal>
             </div>

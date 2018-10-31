@@ -1,16 +1,11 @@
 import axios from 'axios'
 import {auth} from './Authentication/firebase'
 
-const root = "https://wizdomx.herokuapp.com/";
-// window.auth = auth;
 
+const root = "https://wizdomx.herokuapp.com/";
 let idToken = "notoken";
 
-
-// api.loginUser({userEmail: 'markus.awesome@gmail.com', password: 'jesus2008'}).then(res => console.log("HAA", res))
-
 const api = {
-    getAuthUser: () => theUser || "not yet",
     fiba: {
         signOut: () => auth.signOut(),
         loginUser: ({userEmail, password}) => auth.signInWithEmailAndPassword(userEmail, password)
@@ -57,8 +52,6 @@ const reviewEx = {
     emoji: "0x1F596"
     // rating: 3
 }
-
-window.api = api;
 
 function verify() {
     auth.currentUser.getIdToken()
@@ -109,10 +102,8 @@ const post = function (url, data = {}, idToken = idToken) {
 let theUser;
 auth.onAuthStateChanged(function (user) {
     if (user) {
-        console.log("USER Logged IN", user)
-        window.myUser = user;
+        console.log("Lupa user Logged IN!")
         theUser=user;
-
         user.getIdToken(true)
             .then(function (token) {
                 idToken = token;

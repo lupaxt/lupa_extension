@@ -97,20 +97,14 @@ class Rater extends React.Component {
             showReviewMenu: false,
         }
 
-        // api.get.allReviews()
-        //     .then(rev => console.log('reviews', rev))
-        //     .catch(err => console.log('error', err))
-
         this.saveReview = this.saveReview.bind(this)
     }
 
     saveReview() {
         const uid = this.props.uid;
-        console.log(uid, "UID");
-
         api.get.user(uid)
             .then(user => {
-                console.log(user, "user")
+                // console.log(user, "user")
                 const review = {
                     comment: this.state.comment,
                     emoji: this.state.emoji.toString(),
@@ -129,10 +123,8 @@ class Rater extends React.Component {
                     .catch(error => {
                         console.log(error, "at .get.user @ submitting review")
                     })
-
             })
     }
-
     componentDidMount() {
         api.get.reviewsWithKeyValuePair({key: "url", value: document.location.href})
             .then(reviews => {
@@ -157,7 +149,6 @@ class Rater extends React.Component {
                 }
             })
             .catch(err => console.log(err, "error"))
-
     }
 
 
@@ -193,21 +184,13 @@ class Rater extends React.Component {
 
                 {!this.props.uid
                     ? this.state.showReviewMenu &&
-                    <div style={styling.clickBar}>LogIn (@ Extension Popup) to place an opinion</div>
+                    <div style={styling.clickBar}>LogIn (@ Extension Popup) to place an opinion. Reload after LOGIN ;)</div>
                     :
                     <section
                         style={{display: this.state.showReviewMenu ? "flex" : "none", flexDirection: 'column'}}>
 
                         <Button style={styling.clickBar} onClick={this.saveReview}> SAVE
                             THOUGHT {String.fromCharCode(0x270C)}</Button>
-                        {/*{this.state.docInfo.title_guess &&*/}
-                        {/*<div>*/}
-                        {/*<section style={Object.assign({}, styling.clickBar, {fontSize: 12})}>*/}
-                        {/*I'm guessing <div style={{background: "Coral"}}> {this.state.docInfo.title_guess} </div> is the title?*/}
-                        {/*<Button onClick={() => this.setState({title: this.state.docInfo.title_guess})}> {String.fromCodePoint(0x1F44C)} Yep</Button>*/}
-                        {/*<Button onClick={() => this.setState({title: null})}> {String.fromCodePoint(0x1F44C)} Nope</Button>*/}
-                        {/*</section>*/}
-                        {/*</div>}*/}
 
                         <textarea onChange={(ev) => this.setState({comment: ev.target.value})}
                                   value={this.state.comment}

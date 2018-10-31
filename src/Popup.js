@@ -1,26 +1,15 @@
+/*global chrome*/
 import React, {Component} from 'react';
 import Authentication from './Authentication/Authentication';
 import {auth} from './Authentication/firebase';
-import isEmpty from 'is-empty'
 import './App.css';
 import About from './components/About'
 import Activity from './components/Activity'
-/*global chrome*/
-
-
 import {
     Button,
 } from 'reactstrap';
 import api from "./api";
 
-//TODO display Section reader groups joined
-//TODO --> onclick see members or 'expand'
-//TODO display Sectionexplore reader groups
-
-
-
-
-window.auth = auth;
 
 const Groups = (props) => {
     return (
@@ -34,21 +23,12 @@ const Groups = (props) => {
         </div>
     )
 }
-// {display: 'flex', flexDirection: 'column'}
 class Popup extends Component {
     state = {
         view: <About/>,
         groups: [],
         allReviews: [],
     }
-
-    testChrome(){
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            const activeTab = tabs[0];
-            chrome.tabs.sendMessage(activeTab.id, {"uid": "125135235313"});
-        })
-    }
-
     componentDidMount(){
         api.get.allReviews()
             .then(reviews => {
