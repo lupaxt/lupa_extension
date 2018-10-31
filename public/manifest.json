@@ -1,18 +1,23 @@
 {
-  "short_name": "wizdom",
-  "name": "wizdom reader",
+  "short_name": "Lupa",
+  "name": "Lupa reader",
   "manifest_version": 2,
   "browser_action": {
     "default_popup": "index.html",
-    "default_title": "wizdom"
+    "default_title": "Lupa"
   },
   "version": "0.0.3",
   "content_security_policy": "script-src 'self' https://apis.google.com https://*.heroku.com https://cdn.firebase.com https://*.firebaseio.com; object-src 'self'",
+  "background": {
+    "scripts": ["/static/js/background.js"]
+  },
+  "permissions": ["tabs"],
   "content_scripts": [
     {
       "matches": [
         "http://*/*",
-        "https://*/*"
+        "https://*/*",
+        "<all_urls>"
       ],
       "css": ["/static/css/content.css"],
       "js": ["/static/js/content.js"]
