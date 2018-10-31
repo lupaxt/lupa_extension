@@ -17,30 +17,24 @@ const About = () =>
                         <Card className="mx-4">
                             <CardBody className="p-4">
                                 <Form>
-                                    <h1>Good you are here. This is an experiment – Markus</h1>
+                                    <h1>Good you are here – Markus</h1>
                                     <p>
-
-                                        *) Join one of our 'reader groups' -- could be just a bunch of your
-                                        friends interested in the same topics. Right now there's only the Alpha Testing Group.
+                                        *) This is about finding cool things on the web together and not wasting time with BS.
+                                        Right now there's only the Alpha Testing Group.
                                         <br/>
                                         <br/>
-                                        *) When you come across an article (url, really) that was
-                                        reviewed by someone in that
-                                        group you'll see that on the ICON at the bottom of your screen
+                                        *) When you come across an article/content (url, really) that was
+                                        reviewed by someone in that group you'll see that on the ICON at the bottom of your screen
                                         <br/>
                                         <br/>
                                         *) I made this to connect friends and people through
                                         their real (maybe intellectual) interests and to get the most diverse
-                                        inputs
+                                        opinions
                                         <br/>
                                         <br/>
-                                        *) Another new idea is that all your thoughts on a content or resource won't get lost the
-                                        day after in some chat feed, because the thoughts show up exactly when someone comes across the place
-                                        on the web (url).
-                                        <br/>
-                                        <br/>
-                                        *) Your efforts won't get lost with time. Time got removed from the
-                                        equation!
+                                        *) All your thoughts on a content or resource won't get lost the
+                                        day after in some chat feed, because they show up exactly when someone comes across the place
+                                        on the web (url). Time invariance!
                                         <br/>
                                         <br/>
                                         *) Data only gets stored when you submit. There is no background data

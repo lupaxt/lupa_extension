@@ -1,40 +1,27 @@
 import React, {Component} from 'react';
-import {
-    Input,
-    InputGroup,
-    InputGroupAddon,
-    InputGroupText,
-    Container,
-    Row,
-    Col,
-    CardGroup,
-    CardBody,
-    Form,
-    CardFooter,
-    Button,
-    Card,
-} from 'reactstrap';
-import api from "../api";
+import {Button} from 'reactstrap';
 
 
 const styling = {
     red: {
         background: "HotPink",
         color: "white",
-        fontWeight: "bold",
+        fontSize: 11,
         opacity: 0.7
     },
     cyan: {
         background: "DarkTurquoise",
         color: "white",
         fontWeight: "bold",
-        opacity: 0.7
+        opacity: 0.7,
+        marginLeft: 0.5 + 'em'
     },
     orange: {
         background: "Coral",
         color: "white",
-        fontWeight: "bold",
-        opacity: 0.7
+        fontSize: 10,
+        opacity: 0.7,
+        marginLeft: 0.5 + 'em'
     },
     emojiBox: {
         width: 2.5 + 'rem',
@@ -42,6 +29,8 @@ const styling = {
     },
     textField: {
         // layout
+        marginLeft: 1 + 'em',
+        display: 'flex',
         background: "#fff",
         padding: 1.125 + "em",
         borderRadius: 1 + "rem",
@@ -55,7 +44,6 @@ class Activity extends Component {
     }
 
     render() {
-        console.log('haeyays')
         return <React.Fragment>
             <figcaption style={styling.orange}>Group: Handpicked Testies</figcaption>
             <div>
@@ -65,21 +53,20 @@ class Activity extends Component {
                         <section style={{display: 'flex', flexDirection: "column"}}>
                             <div key={review._id}><Button onClick={() => this.goToUser(review.firebaseUID)}
                                                           style={styling.cyan}>{review.handle + " "}</Button>
-                                {" "} placed a review of {" "}
+                                {" "} checked
 
 
                                 {review.title
-                                    ? <Button style={styling.red}>{review.title}</Button>
+                                    ? <Button style={styling.red}> {" "} {review.title}</Button>
                                     : null}
 
-                                {" "} at <Button onClick={() => window.location.replace(review.url)}
-                                                 style={styling.orange}><i>{review.url.slice(0, 30)}</i></Button>
+                                {" "} at <Button onClick={() => window.open(review.url,'_blank')}
+                                                 style={styling.orange}><i>{review.url}</i></Button>
                             </div>
                             <div style={styling.textField}>
                                 <Button
                                     style={styling.emojiBox}>{review.emoji ? String.fromCodePoint(review.emoji) : null}</Button>
-                                <br/>
-                                <figcaption>{review.comment}</figcaption>
+                                <figcaption style={{paddingLeft:1 + 'em'}}>{review.comment}</figcaption>
                             </div>
                         </section>
                     )

@@ -7,7 +7,7 @@ import ReactTooltip from 'react-tooltip';
 import api from '../api'
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {Button} from 'reactstrap'
+import {Button, Input} from 'reactstrap'
 
 
 /*TODO API
@@ -21,6 +21,8 @@ const styling = {
         position: 'fixed',
         bottom: 10,
         left: 10,
+        padding: 0,
+        maxWidth: 300 + 'px',
         // right: 0,
         zIndex: 999999,
         // background: "black",
@@ -91,9 +93,6 @@ class Rater extends React.Component {
             comment: null,
             emoji: null,
             title: null,
-            docInfo: {
-                title_guess: null
-            },
             showReviewMenu: false,
         }
 
@@ -125,18 +124,15 @@ class Rater extends React.Component {
                     })
             })
     }
+
     componentDidMount() {
         api.get.reviewsWithKeyValuePair({key: "url", value: document.location.href})
             .then(reviews => {
                 this.setState({contentReviews: reviews})
 
-                //auth.currentUser
                 if (true) {
                     const uid = this.props.uid || null;
-                    // const uid = auth.currentUser ? auth.currentUser.uid : null || "lnRuVG4hKYMJd7To0KGBkFUBEzl2"
                     const userReview = reviews.find(r => r.firebaseUID === uid);
-
-                    //prefill state if user has review this URL before
 
                     if (userReview) {
                         this.setState({
@@ -155,7 +151,7 @@ class Rater extends React.Component {
     guessDocInfo() {
         const url = document.location.href;
         api.set.docInfo(url, false)
-            .then(info => this.setState({docInfo: {title_guess: info.title}}))
+            .then(info => this.setState({title: info.title}))
             .catch(err => console.log(err, "error at docinfo"))
     }
 
@@ -170,13 +166,22 @@ class Rater extends React.Component {
             <section style={styling.container}>
                 <ToastContainer/>
 
-                <div style={{background: "orange", color: "white", fontWeight: "bold", textAlign: "center"}}>
+                <div style={{
+                    background: "orange",
+                    color: "white",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    width: 2.5 + 'rem',
+                }}
+                >
                     {this.state.contentReviews.filter(review => review.url === document.location.href).length}
                 </div>
 
                 <Button onClick={() => {
                     this.setState({showReviewMenu: !this.state.showReviewMenu});
-                    this.guessDocInfo();
+                    if (!this.state.title) {
+                        this.guessDocInfo();
+                    }
                 }}
                         style={styling.lupa}> {this.state.showReviewMenu ? " __" : "L"}
                 </Button>
@@ -184,13 +189,20 @@ class Rater extends React.Component {
 
                 {!this.props.uid
                     ? this.state.showReviewMenu &&
-                    <div style={styling.clickBar}>LogIn (@ Extension Popup) to place an opinion. Reload after LOGIN ;)</div>
+                    <div style={styling.clickBar}>LogIn (@ Extension Popup) to place an opinion. Reload after LOGIN
+                        ;)</div>
                     :
                     <section
                         style={{display: this.state.showReviewMenu ? "flex" : "none", flexDirection: 'column'}}>
 
                         <Button style={styling.clickBar} onClick={this.saveReview}> SAVE
                             THOUGHT {String.fromCharCode(0x270C)}</Button>
+
+                        <section style={Object.assign({}, styling.clickBar, {fontSize: 12})}>
+                            <Input type="text" placeholder={this.state.title || "Title"}
+                                   onChange={(ev) => this.setState({title: ev.target.value})}/>
+                            {/*<Button onClick={() => this.setState({title: null})}>No</Button>*/}
+                        </section>
 
                         <textarea onChange={(ev) => this.setState({comment: ev.target.value})}
                                   value={this.state.comment}
@@ -218,32 +230,6 @@ class Rater extends React.Component {
             </section>
         )
     }
-}
-
-{
-    /*<StarRatingComponent*/
-}
-
-{/*name="rate1" starCount={5}*/
-}
-{/*editing={true} value={this.state.rating}*/
-}
-{/*onStarHover={(rating) => this.state.emoji_selected ? null : this.setState({rating: rating})}*/
-}
-{/*onStarClick={this.onRate}*/
-}
-{/*/>*/
-}
-
-{/*{this.state.emoji_selected &&*/
-}
-{/*<button onClick={() => {*/
-}
-{/*this.setState({emoji_selected: false, rating: 0});*/
-}
-{/*}}>Reset rating for this piece*/
-}
-{/*</button>}*/
 }
 
 export default Rater;

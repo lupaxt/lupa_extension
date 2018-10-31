@@ -6,6 +6,11 @@ import Rater from './components/Rater'
 
 console.log('Hi! Lupa here')
 
+function openInNewTab(url) {
+    var win = window.open(url, '_blank');
+    win.focus();
+}
+
 let uid = null;
 
 //inject in DOM
