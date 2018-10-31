@@ -6,11 +6,6 @@ import Rater from './components/Rater'
 
 console.log('Hi! Lupa here')
 
-function openInNewTab(url) {
-    var win = window.open(url, '_blank');
-    win.focus();
-}
-
 let uid = null;
 
 //inject in DOM
@@ -21,7 +16,9 @@ ReactDOM.render(<Rater uid={uid}/>, newDiv);
 
 chrome.runtime.sendMessage({user: true}, function(response) {
     console.log(response.user ? 'user exists' : "no logged in user found");
-    uid = response.user.uid;
-    ReactDOM.render(<Rater uid={uid}/>, newDiv);
+    if (response.user) {
+        uid = response.user.uid;
+        ReactDOM.render(<Rater uid={uid}/>, newDiv);
+    }
 });
 

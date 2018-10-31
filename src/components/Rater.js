@@ -106,7 +106,7 @@ class Rater extends React.Component {
                 // console.log(user, "user")
                 const review = {
                     comment: this.state.comment,
-                    emoji: this.state.emoji.toString(),
+                    emoji: this.state.emoji,
                     emoji_name: this.state.emoji_name,
                     title: this.state.title,
                     url: document.location.href,
@@ -216,8 +216,8 @@ class Rater extends React.Component {
                                         {emoji_category.map(e =>
                                             <Button ref={e.name} data-tip={e.name}
                                                     onHover={() => ReactTooltip.show(findDOMNode(this.refs.e['name']))}
-                                                    style={e.code === this.state.emoji ? emojiBox_selected : styling.emojiBox}
-                                                    onClick={() => e.code === this.state.emoji ? this.setState({emoji: null}) : this.emoji_selected(e.code, e.name)}>
+                                                    style={e.code == this.state.emoji ? emojiBox_selected : styling.emojiBox}
+                                                    onClick={() => e.code == this.state.emoji ? this.setState({emoji: null}) : this.emoji_selected(e.code, e.name)}>
                                                 {String.fromCodePoint(e.code)}
                                                 <ReactTooltip/>
                                             </Button>

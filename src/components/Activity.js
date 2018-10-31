@@ -7,14 +7,14 @@ const styling = {
         background: "HotPink",
         color: "white",
         fontSize: 11,
-        opacity: 0.7
+        opacity: 0.7,
+        marginLeft: 0.5 + 'em'
     },
     cyan: {
         background: "DarkTurquoise",
         color: "white",
         fontWeight: "bold",
         opacity: 0.7,
-        marginLeft: 0.5 + 'em'
     },
     orange: {
         background: "Coral",
@@ -31,9 +31,8 @@ const styling = {
         // layout
         marginLeft: 1 + 'em',
         display: 'flex',
+        fontSize: 11,
         background: "#fff",
-        padding: 1.125 + "em",
-        borderRadius: 1 + "rem",
         boxShadow: 0.5 + "rem rgba(0, 0, 0, .3)"
     }
 }
@@ -49,11 +48,13 @@ class Activity extends Component {
             <div>
                 {this.props.reviews.length < 1
                     ? <div>Loading Reviews ...</div>
-                    : this.props.reviews.map(review =>
+                    : this.props.reviews
+                        .sort((a,b) => b.timestamp - a.timestamp)
+                        .map(review =>
                         <section style={{display: 'flex', flexDirection: "column"}}>
                             <div key={review._id}><Button onClick={() => this.goToUser(review.firebaseUID)}
                                                           style={styling.cyan}>{review.handle + " "}</Button>
-                                {" "} checked
+                                {" checked "}
 
 
                                 {review.title
