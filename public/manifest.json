@@ -10,7 +10,7 @@
     "default_popup": "index.html",
     "default_title": "Lupa"
   },
-  "version": "0.0.3",
+  "version": "0.0.5",
   "content_security_policy": "script-src 'self' https://apis.google.com https://*.heroku.com https://cdn.firebase.com https://*.firebaseio.com; object-src 'self'",
   "background": {
     "scripts": [

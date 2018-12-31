@@ -99,22 +99,6 @@ const post = function (url, data = {}, idToken = idToken) {
 };
 
 
-let theUser;
-auth.onAuthStateChanged(function (user) {
-    if (user) {
-        console.log("Lupa user Logged IN!")
-        theUser=user;
-        user.getIdToken(true)
-            .then(function (token) {
-                idToken = token;
-            })
-            .catch(err => console.log('couldnt get idtoken', err))
-    }
-    else {
-        window.myUser = "nope"
-    }
-});
-
 
 //make standardWrapper Promise for catch and then
 

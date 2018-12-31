@@ -44,7 +44,8 @@ class Activity extends Component {
 
     render() {
         return <React.Fragment>
-            <figcaption style={styling.orange}>Group: Handpicked Testies</figcaption>
+            <figcaption style={styling.orange}>Group: Handpicked Alpha Testers</figcaption>
+            {/*<button onClick={() => window.open("www.dacapo.io/lupa",'_blank')}> Watch in new tab </button>*/}
             <div>
                 {this.props.reviews.length < 1
                     ? <div>Loading Reviews ...</div>

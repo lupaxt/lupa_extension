@@ -1,0 +1,55 @@
+
+.nametag {
+    background: #61dafb;
+    color: white;
+    padding: 0.3rem;
+}
+.reply {
+
+}
+
+
+.textbubbles {
+    border-radius: 10px;
+    font-weight: lighter;
+    margin: 0.5rem;
+}
+
+.textbubbles > span {
+    border-radius: 10px;
+    padding: 0.2rem;
+    font-size: 1.2rem;
+    font-weight: lighter;
+}
+.textbubbles > div {
+    border-radius: 10px;
+    padding: 0.2rem;
+    font-size: 1.2rem;
+    font-weight: lighter;
+}
+
+.reviewtitle {
+    background: lightblue;
+    font-size: 1.5rem;
+    font-weight: normal;
+    margin-left: 0.5rem;
+}
+.reviewtext {
+    background: #e2dede;
+}
+.comment {
+    margin: 0.3rem;
+    margin-left: 4rem;
+    font-size: 1.1rem;
+    /*display: flex;*/
+    /*flex-direction: row;*/
+}
+.reply {
+
+    margin-left: 6rem;
+    font-size: 1.1rem;
+}
+
+.comment-btn {
+
+}

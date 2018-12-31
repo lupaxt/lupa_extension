@@ -8,6 +8,8 @@ import api from '../api'
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {Button, Input} from 'reactstrap'
+import InputChoice from './InputChoice'
+import {InputChecks} from './InputChoice'
 
 
 /*TODO API
@@ -84,6 +86,8 @@ const emojis = [ //U+ ==> 0x
 class Rater extends React.Component {
     constructor(props) {
         super();
+
+        this.buttonColors = ['blue', 'purple']
 
         this.state = {
             // rating: 0,
@@ -162,9 +166,46 @@ class Rater extends React.Component {
     }
 
     render() {
+        const localreviews = this.state.contentReviews.filter(review => review.url === document.location.href)
         return (
             <section style={styling.container}>
                 <ToastContainer/>
+
+                <div style={{display: 'flex', flexDirection: 'column'}}>
+                    {localreviews
+                        .map((review, idx) => {
+                            const handle = review.handle;
+                            return (
+                                <Button style={{
+                                    fontSize: 14,
+                                    border: "1px white",
+                                    marginTop: "3px",
+                                    color: "white",
+                                    fontWeight: 'bold',
+                                    background: this.buttonColors[idx % 2]
+                                }}
+                                        ref={handle}
+                                        data-tip={`${String.fromCodePoint(review.emoji)}  ${review.comment}`}
+
+                                        onClick={() => ReactTooltip.show(findDOMNode(this.refs[handle]))}
+                                >
+                                    {"@" + review.handle}
+                                </Button>)
+                        })}
+
+
+                    {localreviews.length ? (<Button style={{background: "black", color: "white"}} onClick={() => {
+                        for (let prop in this.refs) {
+                            console.log(this.refs, "refs")
+                            ReactTooltip.hide(findDOMNode(this.refs[prop]))
+                        }
+                    }}> [X] tooltips</Button>) : null}
+                </div>
+                <ReactTooltip
+                    multiline={true}
+                    data-offset={JSON.stringify({bottom: 10, left: 20})}
+                    place={'right'}
+                    type='info'/>
 
                 <div style={{
                     background: "orange",
@@ -174,6 +215,8 @@ class Rater extends React.Component {
                     width: 2.5 + 'rem',
                 }}
                 >
+
+
                     {this.state.contentReviews.filter(review => review.url === document.location.href).length}
                 </div>
 
@@ -182,6 +225,7 @@ class Rater extends React.Component {
                     if (!this.state.title) {
                         this.guessDocInfo();
                     }
+
                 }}
                         style={styling.lupa}> {this.state.showReviewMenu ? " __" : "L"}
                 </Button>
@@ -209,6 +253,7 @@ class Rater extends React.Component {
                                   placeholder={this.state.comment || `${String.fromCodePoint(0x1F449)} How do you feel about this article | video | product | whatever ? `}
                                   cols="20" rows="5"
                         />
+                        <InputChecks choices={["alpha_tester", "synbio", "evolution", "schwubdi", "hexagon"]}/>
                         <section>
                             {emojis
                                 .map(emoji_category =>

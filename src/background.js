@@ -12,6 +12,7 @@ auth.onAuthStateChanged(function (user) {
     }
 });
 
+/*
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         console.log(sender.tab ?
@@ -19,4 +20,4 @@ chrome.runtime.onMessage.addListener(
             "from the extension");
         if (request.user)
             sendResponse({user: myUser});
-    });
+    });*/

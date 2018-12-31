@@ -9,6 +9,7 @@ import {
     Button,
 } from 'reactstrap';
 import api from "./api";
+import PrivacyPolicy from "./components/PrivacyPolicy";
 
 
 const Groups = (props) => {
@@ -47,6 +48,7 @@ class Popup extends Component {
                     : (<React.Fragment>
                             <Button onClick={() => this.setState({view: <About/>})}>About</Button>
                             <Button onClick={() => this.setState({view: <Activity reviews={this.state.allReviews}/>})}>Activity</Button>
+                            <Button onClick={() => this.setState({view: <PrivacyPolicy/>})}>Privacy</Button>
                             <Button onClick={() => auth.signOut()}>Sign Out</Button>
                             {/*<Button>Your Groups (disabled) - coming soon</Button>*/}
                         </React.Fragment>

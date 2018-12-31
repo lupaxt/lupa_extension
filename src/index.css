@@ -12,3 +12,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.__react_component_tooltip show place-right type-info  {
+  max-width: 15rem;
+}

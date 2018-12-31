@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Popup from './Popup';
 import {auth} from "./Authentication/firebase";
+import Rater from './components/Rater'
 // import registerServiceWorker from './registerServiceWorker';
 
 //CSS STYLESHEETS
@@ -12,15 +13,16 @@ import "./styles/coreui/coreui.css"
 // import "@coreui/icons/css/coreui-icons.css"
 import './styles/index.css';
 
-chrome.runtime.sendMessage({user: true}, function(response) {
+chrome.runtime.sendMessage("nalofdpcjiipfedhjhkmdpnjflgpbmil",{user: true}, function(response) {
     console.log(response.user.uid);
     const user = response.user.uid;
-    ReactDOM.render(<Popup user={user}/>, document.getElementById('root'));
+    ReactDOM.render(<Rater uid={"asdsds"} user={null}/>, document.getElementById('root'));
 });
 
 //for registering / logout transission
-auth.onAuthStateChanged(user => ReactDOM.render(<Popup user={user}/>, document.getElementById('root')))
+auth.onAuthStateChanged(user => ReactDOM.render(<Rater uid={"asdsds"} user={null}/>, document.getElementById('root')))
 
-ReactDOM.render(<Popup user={null}/>, document.getElementById('root'));
+ReactDOM.render(<Rater uid={"asdsds"} user={null}/>, document.getElementById('root'));
+// ReactDOM.render(<Popup user={null}/>, document.getElementById('root'));
 //blocks request sheme
 //registerServiceWorker();
