@@ -8,15 +8,46 @@ import api from '../api'
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {Button, Input} from 'reactstrap'
-import InputChoice from './InputChoice'
 import {InputChecks} from './InputChoice'
-
-
+import {createReview} from "../apis/mutations";
+import {getReviewsForTarget} from "../apis/query";
+import ReviewThread from './ReviewThread'
 /*TODO API
 TODO DELETE RATING, ADD RATING, CHANGE RATING for URL
 TODO ON RATING --> PARSE URL -->UPDATE ALL RATINGS FOR THIS URL
 TODO
 */
+
+
+/*   .map((review, idx) => {
+           const name = review.author.name;
+           return (
+               <Button style={{
+                   fontSize: 14,
+                   border: "1px white",
+                   marginTop: "3px",
+                   color: "white",
+                   fontWeight: 'bold',
+                   background: this.buttonColors[idx % 2]
+               }}
+                       key={review.id}
+                       ref={review.id}
+                       data-tip={`${String.fromCodePoint(review.emoji)}  ${review.description}`}
+
+                       onClick={() => ReactTooltip.show(findDOMNode(this.refs[review.id]))}
+               >
+                   {"@" + review.name}
+               </Button>)
+       }
+   )*/
+
+
+/*   {localreviews.length ? (<Button style={{background: "black", color: "white"}} onClick={() => {
+                        for (let prop in this.refs) {
+                            console.log(this.refs, "refs")
+                            ReactTooltip.hide(findDOMNode(this.refs[prop]))
+                        }
+                    }}> [X] tooltips</Button>) : null}*/
 
 const styling = {
     container: {
@@ -101,54 +132,60 @@ class Rater extends React.Component {
         }
 
         this.saveReview = this.saveReview.bind(this)
+        this.setGroups = this.setGroups.bind(this)
     }
 
-    saveReview() {
-        const uid = this.props.uid;
-        api.get.user(uid)
-            .then(user => {
-                // console.log(user, "user")
-                const review = {
-                    comment: this.state.comment,
-                    emoji: this.state.emoji,
-                    emoji_name: this.state.emoji_name,
-                    title: this.state.title,
-                    url: document.location.href,
-                    firebaseUID: uid,
-                    handle: user[0].handle,
-                }
+    async saveReview() {
+        //TODO get user as prop (lupa_user)
 
-                api.set.review(review)
-                    .then(res => {
-                        toast(String.fromCodePoint(0x1F64C) + "    Saved!   " + String.fromCodePoint(0x1F389))
-                        this.setState({showReviewMenu: false})
-                    })
-                    .catch(error => {
-                        console.log(error, "at .get.user @ submitting review")
-                    })
-            })
+        const {description, title, emoji, groups} = this.state
+        const review = {
+            description: this.state.comment,
+            emoji: this.state.emoji,
+            title: this.state.title,
+            groups: this.state.groups,
+            target: document.location.href,
+            targetType: "webpage",
+        }
+
+        try {
+            const rev = await createReview(review)
+            toast(String.fromCodePoint(0x1F64C) + "    Saved!   " + String.fromCodePoint(0x1F389))
+            this.setState({showReviewMenu: false})
+        } catch (err) {
+            toast("Something went wrong saving your review =(")
+
+            console.log(err, "at .get.user @ submitting review")
+        }
+
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        if (this.props.lupa_user !== nextProps.lupa_user) {
+            const data = await getReviewsForTarget(document.location.href)
+            this.setState({
+                contentReviews: data.reviewsForTarget
+            });
+        }
     }
 
     componentDidMount() {
-        api.get.reviewsWithKeyValuePair({key: "url", value: document.location.href})
-            .then(reviews => {
-                this.setState({contentReviews: reviews})
 
-                if (true) {
-                    const uid = this.props.uid || null;
-                    const userReview = reviews.find(r => r.firebaseUID === uid);
-
-                    if (userReview) {
-                        this.setState({
-                            comment: userReview.comment,
-                            emoji: userReview.emoji,
-                            hasReviewed: true,
-                            title: userReview.title
-                        })
-                    }
-                }
-            })
-            .catch(err => console.log(err, "error"))
+        // this.setState({contentReviews: reviews})
+        //
+        // if (true) {
+        //     const uid = this.props.uid || null;
+        //     const userReview = reviews.find(r => r.firebaseUID === uid);
+        //
+        //     if (userReview) {
+        //         this.setState({
+        //             comment: userReview.comment,
+        //             emoji: userReview.emoji,
+        //             hasReviewed: true,
+        //             title: userReview.title
+        //         })
+        //     }
+        // }
     }
 
 
@@ -165,41 +202,25 @@ class Rater extends React.Component {
         this.setState({emoji_name: emoji_name})
     }
 
+    setGroups = (groups) => {
+        const user = this.props.lupa_user;
+        if (!user) return
+        const ids = user.roles
+            .filter(role => role.group)
+            .filter(r => groups.includes(r.group.name))
+            .map(legitRole => legitRole.group.id);
+        this.setState({groups: ids})
+    }
+
     render() {
-        const localreviews = this.state.contentReviews.filter(review => review.url === document.location.href)
+        const localreviews = this.state.contentReviews.filter(review => review.target === document.location.href)
         return (
             <section style={styling.container}>
                 <ToastContainer/>
 
                 <div style={{display: 'flex', flexDirection: 'column'}}>
-                    {localreviews
-                        .map((review, idx) => {
-                            const handle = review.handle;
-                            return (
-                                <Button style={{
-                                    fontSize: 14,
-                                    border: "1px white",
-                                    marginTop: "3px",
-                                    color: "white",
-                                    fontWeight: 'bold',
-                                    background: this.buttonColors[idx % 2]
-                                }}
-                                        ref={handle}
-                                        data-tip={`${String.fromCodePoint(review.emoji)}  ${review.comment}`}
+                    {localreviews.map(review => <ReviewThread review={review} user={this.props.lupa_user}/>)}
 
-                                        onClick={() => ReactTooltip.show(findDOMNode(this.refs[handle]))}
-                                >
-                                    {"@" + review.handle}
-                                </Button>)
-                        })}
-
-
-                    {localreviews.length ? (<Button style={{background: "black", color: "white"}} onClick={() => {
-                        for (let prop in this.refs) {
-                            console.log(this.refs, "refs")
-                            ReactTooltip.hide(findDOMNode(this.refs[prop]))
-                        }
-                    }}> [X] tooltips</Button>) : null}
                 </div>
                 <ReactTooltip
                     multiline={true}
@@ -217,7 +238,7 @@ class Rater extends React.Component {
                 >
 
 
-                    {this.state.contentReviews.filter(review => review.url === document.location.href).length}
+                    {this.state.contentReviews.filter(review => review.target === document.location.href).length}
                 </div>
 
                 <Button onClick={() => {
@@ -225,6 +246,10 @@ class Rater extends React.Component {
                     if (!this.state.title) {
                         this.guessDocInfo();
                     }
+                    // Test
+                    // getReviewsForTarget(document.location.href)
+                    //     .then(res => console.log('res',res))
+                    //     .catch(err => console.log('err',err))
 
                 }}
                         style={styling.lupa}> {this.state.showReviewMenu ? " __" : "L"}
@@ -250,10 +275,12 @@ class Rater extends React.Component {
 
                         <textarea onChange={(ev) => this.setState({comment: ev.target.value})}
                                   value={this.state.comment}
-                                  placeholder={this.state.comment || `${String.fromCodePoint(0x1F449)} How do you feel about this article | video | product | whatever ? `}
+                                  placeholder={this.state.comment || `${String.fromCodePoint(0x1F449)} How do you feel about this article | video | product | ... |  ? `}
                                   cols="20" rows="5"
                         />
-                        <InputChecks choices={["alpha_tester", "synbio", "evolution", "schwubdi", "hexagon"]}/>
+                        {this.props.lupa_user && <InputChecks onCheck={this.setGroups}
+                                                              choices={this.props.lupa_user.roles.filter(role => role.group).map(role => role.group.name)}/>}
+                        {/*// : ["alpha_tester", "synbio", "evolution", "hexagon"]*/}
                         <section>
                             {emojis
                                 .map(emoji_category =>

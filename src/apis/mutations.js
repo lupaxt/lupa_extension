@@ -4,8 +4,8 @@ import gql from 'graphql-tag';
 import gqlRequest from "../components/gqlRequest";
 //createReview is just the operationname you can see in your http request later
 const CREATE_REVIEW_MUTATION = gql`
-    mutation createReview($title: String, $target: String!, $description: String!, $targetType: String) {
-        createReview(title: $title, target: $target, targetType: $targetType, description: $description) {
+    mutation createReview($title: String, $target: String!, $groups: [String!], $description: String!, $targetType: String) {
+        createReview(title: $title, target: $target, groups: $groups, targetType: $targetType, description: $description) {
             id
             title
             target
@@ -53,11 +53,13 @@ const CREATE_GROUP_MUTATION = gql`
 `;
 
 const createGroup = (name, description) => gqlRequest(CREATE_GROUP_MUTATION, {name, description});
-const createReview = (target, targetType, title, description) => gqlRequest(CREATE_REVIEW_MUTATION, {
+const createReview = ({target, targetType, title, description, emoji, groups}) => gqlRequest(CREATE_REVIEW_MUTATION, {
     target,
     title,
     description,
-    targetType
+    targetType,
+    emoji,
+    groups
 });
 const deleteReview = (id) => gqlRequest(DELETE_REVIEW, {id});
 

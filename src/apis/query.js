@@ -1,6 +1,6 @@
 // import {gql} from "apollo-boost";
 import gql from 'graphql-tag';
-import {gqlRequest} from "../components/gqlRequest";
+import gqlRequest from "../components/gqlRequest";
 
 
 //TODO figure out how graphql ...fragments work
@@ -280,10 +280,12 @@ const getGroupByName = (name) => gqlRequest(GET_GROUP_BY_NAME, {name});
 const getReviewsForUserGroups = () => gqlRequest(GET_REVIEWS_FOR_USERGROUPS, {});
 const getReviewsForTarget = (target) => gqlRequest(GET_REVIEWS_FOR_TARGET, {target});
 const getReviews = () => gqlRequest(GET_REVIEWS, {});
+const getUser = (fibauid) => gqlRequest(GET_USER, {fibauid});
 
 
 export {
     getReviewsForTarget,
+    getUser,
     getReviews,
     getReviewsForUserGroups,
     getGroupByName,

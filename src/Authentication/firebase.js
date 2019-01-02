@@ -26,7 +26,7 @@ const isFirebaseSetup = function() {
 
 const auth = firebase.auth();
 
-// window.auth = auth;
+window.auth = auth;
 
 export {
   auth

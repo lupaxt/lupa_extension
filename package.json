@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@coreui/coreui": "^2.0.4",
+    "apollo-boost": "^0.1.23",
     "autoprefixer": "7.1.6",
     "axios": "^0.18.0",
     "babel-core": "6.26.0",
@@ -26,6 +27,7 @@
     "file-loader": "1.1.5",
     "firebase": "^5.4.0",
     "fs-extra": "3.0.1",
+    "graphql": "^14.0.2",
     "graphql-request": "^1.8.2",
     "graphql-tag": "^2.10.0",
     "html-webpack-plugin": "2.29.0",

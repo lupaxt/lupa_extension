@@ -25,28 +25,41 @@ export default function InputChoice({choices = [defaultGroup], defaultChoice = d
     </React.Fragment>
 }
 
-export class InputChecks extends React.Component{
-    constructor({choices=[defaultGroup, "synbio", "xmen"], defaultChoice=defaultGroup}) {
+const getTrue= (obj)=> Object.keys(obj).filter(key => obj[key])
+export class InputChecks extends React.Component {
+    constructor({choices = [defaultGroup, "synbio"], defaultChoice = defaultGroup, onCheck}) {
         super();
         const st = {}
         choices.forEach(c => st[c] = false);
         this.ch = choices;
         st[defaultChoice] = true;
         this.state = st;
+        this.click = this.click.bind(this);
+        onCheck(getTrue(this.state))
+    }
+
+    async click(event) {
+        //cache
+        const value = event.target.value
+
+        console.log(value, this.state, "aaahahh")
+        await this.setState({[value]: !this.state[value]})
+        this.props.onCheck(getTrue(this.state))
     }
 
     render() {
-        return <div style={{display: "flex", flexWrap:"wrap"}}>
+        const that = this;
+        return <div style={{display: "flex", flexWrap: "wrap"}}>
             {this.ch.map(choice => (
                 <div> {"  "}
-            <input key={choice.length + choice.codePointAt(1)}
-                   type="checkbox" checked={this.state[choice]}
-                   onClick={ev => this.setState({[ev.target.value]: !this.state[ev.target.value]})}
-                   value={choice}/>
+                    <input key={choice.length + choice.codePointAt(1)}
+                           type="checkbox" checked={this.state[choice]}
+                           onClick={this.click}
+                           value={choice}/>
                     {choice}
                 </div>
             ))}
-            </div>
+        </div>
     }
 
 }
