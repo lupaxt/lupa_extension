@@ -141,7 +141,7 @@ class Rater extends React.Component {
         const {description, title, emoji, groups} = this.state
         const review = {
             description: this.state.comment,
-            emoji: this.state.emoji,
+            emoji: String(this.state.emoji),
             title: this.state.title,
             groups: this.state.groups,
             target: document.location.href,
@@ -169,26 +169,6 @@ class Rater extends React.Component {
         }
     }
 
-    componentDidMount() {
-
-        // this.setState({contentReviews: reviews})
-        //
-        // if (true) {
-        //     const uid = this.props.uid || null;
-        //     const userReview = reviews.find(r => r.firebaseUID === uid);
-        //
-        //     if (userReview) {
-        //         this.setState({
-        //             comment: userReview.comment,
-        //             emoji: userReview.emoji,
-        //             hasReviewed: true,
-        //             title: userReview.title
-        //         })
-        //     }
-        // }
-    }
-
-
     guessDocInfo() {
         const url = document.location.href;
         api.set.docInfo(url, false)
@@ -197,7 +177,6 @@ class Rater extends React.Component {
     }
 
     emoji_selected(emoji_code, emoji_name) {
-        console.log(emoji_code)
         this.setState({emoji: emoji_code})
         this.setState({emoji_name: emoji_name})
     }

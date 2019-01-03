@@ -14,20 +14,32 @@ import "./styles/coreui/coreui.css"
 import './styles/index.css';
 import {getUser} from "./apis/query";
 
-chrome.runtime.sendMessage("nalofdpcjiipfedhjhkmdpnjflgpbmil",{user: true}, async function(response) {
-    // console.log(response.user.uid);
-    // const user = response.user.uid;
-    // const lupa_user = await getUser(user)
-    ReactDOM.render(<Rater uid={"asdsds"} /*user={lupa_user}*//>, document.getElementById('root'));
+
+chrome.runtime.sendMessage({user: true}, function(response) {
+    console.log(response.user.uid);
+    const user = response.user.uid;
+    ReactDOM.render(<Popup user={user}/>, document.getElementById('root'));
 });
+/*chrome.runtime.sendMessage("nalofdpcjiipfedhjhkmdpnjflgpbmil",{user: true}, async function(response) {
+    console.log(response.user.uid);
+    const user = response.user.uid;
+    const lupa_user = await getUser(user)
+    ReactDOM.render(<Rater uid={"asdsds"} /!*user={lupa_user}*!//>, document.getElementById('root'));
+});*/
 
 //for registering / logout transission
-auth.onAuthStateChanged(async (user) =>  {
+
+auth.onAuthStateChanged(user => ReactDOM.render(<Popup user={user}/>, document.getElementById('root')))
+
+/*auth.onAuthStateChanged(async (user) =>  {
     const lupa_user = await getUser(user.uid);
     ReactDOM.render(<Rater uid={"asdsds"} user={user} lupa_user={lupa_user.user}/>, document.getElementById('root'))
-})
+})*/
 
-ReactDOM.render(<Rater uid={"asdsds"} user={null}/>, document.getElementById('root'));
-// ReactDOM.render(<Popup user={null}/>, document.getElementById('root'));
+// ReactDOM.render(<Rater uid={"asdsds"} user={null}/>, document.getElementById('root'));
+ReactDOM.render(<Popup user={null}/>, document.getElementById('root'));
+
+//for registering / logout transission
+
 //blocks request sheme
 //registerServiceWorker();
