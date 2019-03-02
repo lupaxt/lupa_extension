@@ -10,15 +10,16 @@
     "default_popup": "index.html",
     "default_title": "Lupa"
   },
-  "version": "0.0.5",
-  "content_security_policy": "script-src 'self' https://apis.google.com https://*.heroku.com https://cdn.firebase.com https://*.firebaseio.com; object-src 'self'",
+  "version": "0.0.89",
+  "content_security_policy": "script-src 'self' https://apis.google.com https://www.gstatic.com/ https://*.heroku.com https://cdn.firebase.com https://*.firebaseio.com; object-src 'self'",
   "background": {
     "scripts": [
       "/static/js/background.js"
     ]
   },
   "permissions": [
-    "tabs"
+    "tabs",
+    "identity"
   ],
   "content_scripts": [
     {

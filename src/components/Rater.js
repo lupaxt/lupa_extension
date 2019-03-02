@@ -4,13 +4,13 @@ import ReactDOM, {findDOMNode} from 'react-dom';
 // import StarRatingComponent from 'react-star-rating-component'
 // import {auth} from "../Authentication/firebase";
 import ReactTooltip from 'react-tooltip';
-import api from '../api'
+import api from '../apis/api'
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {Button, Input} from 'reactstrap'
 import {InputChecks} from './InputChoice'
 import {createReview} from "../apis/mutations";
-import {getReviewsForTarget} from "../apis/query";
+import {getReviewsForTarget, getUser} from "../apis/query";
 import ReviewThread from './ReviewThread'
 /*TODO API
 TODO DELETE RATING, ADD RATING, CHANGE RATING for URL
@@ -69,11 +69,18 @@ const styling = {
         color: "white",
         fontWeight: 'bold',
         width: 2.5 + 'rem',
-        height: 2.5 + 'rem'
+        height: 2.5 + 'rem',
+        maxWidth: 40 + "px",
+        minWidth: 35 + "px",
+        minHeight: 30 + "px",
+        maxHeight: 35 + "px",
+        padding: 0,
     },
     clickBar: {
         background: "DarkTurquoise",
         fontSize: 1 + 'em',
+        padding: 15 + 'px',
+
         color: "white",
         fontWeight: 'bold',
     },
@@ -81,6 +88,10 @@ const styling = {
     emojiBox: {
         width: 2.5 + 'rem',
         height: 2.5 + 'rem',
+        padding: 0.35 + "rem",
+        background: "grey",
+        maxWidth: 30 + "px",
+        maxHeight: 30 + "px",
     },
 }
 const emojiBox_selected = Object.assign({}, styling.emojiBox, {background: "DarkTurquoise"})
@@ -161,12 +172,26 @@ class Rater extends React.Component {
     }
 
     async componentWillReceiveProps(nextProps) {
-        if (this.props.lupa_user !== nextProps.lupa_user) {
+        // console.log('rater next prosp', nextProps)
+        if (this.state.lupa_user !== nextProps.lupa_user) {
             const data = await getReviewsForTarget(document.location.href)
             this.setState({
                 contentReviews: data.reviewsForTarget
             });
         }
+    }
+
+
+    async componentDidMount() {
+        let lupa_user = null;
+        if (this.props.uid) {
+            lupa_user = await getUser(this.props.uid)
+        }
+        const data = await getReviewsForTarget(document.location.href)
+        this.setState({
+            contentReviews: data.reviewsForTarget,
+            lupa_user: lupa_user ? lupa_user.user : null
+        });
     }
 
     guessDocInfo() {
@@ -182,7 +207,7 @@ class Rater extends React.Component {
     }
 
     setGroups = (groups) => {
-        const user = this.props.lupa_user;
+        const user = this.state.lupa_user;
         if (!user) return
         const ids = user.roles
             .filter(role => role.group)
@@ -198,7 +223,7 @@ class Rater extends React.Component {
                 <ToastContainer/>
 
                 <div style={{display: 'flex', flexDirection: 'column'}}>
-                    {localreviews.map(review => <ReviewThread review={review} user={this.props.lupa_user}/>)}
+                    {this.state.lupa_user && localreviews.map(review => <ReviewThread review={review} user={this.state.lupa_user} />)}
 
                 </div>
                 <ReactTooltip
@@ -235,13 +260,13 @@ class Rater extends React.Component {
                 </Button>
 
 
-                {!this.props.uid
+                {!this.state.lupa_user
                     ? this.state.showReviewMenu &&
                     <div style={styling.clickBar}>LogIn (@ Extension Popup) to place an opinion. Reload after LOGIN
                         ;)</div>
                     :
                     <section
-                        style={{display: this.state.showReviewMenu ? "flex" : "none", flexDirection: 'column'}}>
+                        style={{display: this.state.showReviewMenu ? "flex" : "none", flexDirection: 'column', maxWidth: 200 + "px"}}>
 
                         <Button style={styling.clickBar} onClick={this.saveReview}> SAVE
                             THOUGHT {String.fromCharCode(0x270C)}</Button>
@@ -257,8 +282,8 @@ class Rater extends React.Component {
                                   placeholder={this.state.comment || `${String.fromCodePoint(0x1F449)} How do you feel about this article | video | product | ... |  ? `}
                                   cols="20" rows="5"
                         />
-                        {this.props.lupa_user && <InputChecks onCheck={this.setGroups}
-                                                              choices={this.props.lupa_user.roles.filter(role => role.group).map(role => role.group.name)}/>}
+                        {this.state.lupa_user && <InputChecks onCheck={this.setGroups}
+                                                              choices={this.state.lupa_user.roles.filter(role => role.group).map(role => role.group.name)}/>}
                         {/*// : ["alpha_tester", "synbio", "evolution", "hexagon"]*/}
                         <section>
                             {emojis

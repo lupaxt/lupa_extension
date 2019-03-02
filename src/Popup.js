@@ -7,8 +7,10 @@ import Activity from './components/Activity'
 import {
     Button,
 } from 'reactstrap';
-import api from "./api";
+import api from "./apis/api";
 import PrivacyPolicy from "./components/PrivacyPolicy";
+import {graphql_server, app} from "./endpoints";
+import AccountPage from "./components/account/AccountPage";
 
 const Groups = (props) => {
     return (
@@ -24,15 +26,21 @@ const Groups = (props) => {
 }
 
 const newtab = (url) => {
-    chrome.tabs.create({url: "https://example.com"});
+    chrome.tabs.create({url});
     window.close()
 }
 
+
 const URLs = {
-    account: "https://lupa.com",
-    activity: "https://lupa.com",
+    //TODO ATTENTION: // maybe double
+    account: app + "account",
+    activity: app,
     // activity: "https://lupa.com",
 }
+
+{/* <Button
+                        onClick={() => newtab(URLs.account)}>Sign In: Manage Account >>
+                    </Button>*/}
 
 class Popup extends Component {
     state = {
@@ -52,11 +60,8 @@ class Popup extends Component {
     render() {
         return (
             <div>
-                { (!this.props.user) ?
-                    <Button
-                        onClick={() => newtab(URLs.account)}>Sign In: Manage Account >>
-                    </Button>
-
+                { (!this.props.user)
+                    ? <AccountPage />
                     : (<React.Fragment>
                             <Button onClick={() => this.setState({view: <About/>})}>About</Button>
                             <Button onClick={() => newtab(URLs.activity)}>Activity</Button>

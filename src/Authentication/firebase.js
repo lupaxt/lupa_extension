@@ -11,9 +11,7 @@ var config = {
     messagingSenderId: "1078468381731"
 };
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(config);
-}
+firebase.initializeApp(config);
 
 const isFirebaseSetup = function() {
     if (!window.firebase || !(firebase.app instanceof Function) || !firebase.app().options) {
@@ -24,9 +22,22 @@ const isFirebaseSetup = function() {
     return false;
 }
 
+// Create a callback which logs the current auth state
+function authDataCallback(authData) {
+    if (authData) {
+        console.log("User " + authData['uid'] + " is logged with token" + authData['ie']);
+    } else {
+        console.log("User is logged out");
+    }
+}
+// Register the callback to be fired every time auth state changes
+// isFirebaseSetup(); buggy
+
 const auth = firebase.auth();
 
-window.auth = auth;
+// auth.onAuthStateChanged(user => console.log("user in firebase.js", user, "getidtoken", user.getIdToken))
+
+window.auth_ext = auth;
 
 export {
   auth

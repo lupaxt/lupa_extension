@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 // import * as auth from './auth';
-import api from '../api'
+import api from '../apis/api'
 import {auth} from './firebase';
 import isEmpty from 'is-empty';
 import {

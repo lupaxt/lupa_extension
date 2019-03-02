@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-const defaultGroup = "alpha_tester"
+const defaultGroup = "alpha_go"
 
 export default function InputChoice({choices = [defaultGroup], defaultChoice = defaultGroup, handleClick}) {
     const [value, setValue] = useState("")
@@ -27,7 +27,7 @@ export default function InputChoice({choices = [defaultGroup], defaultChoice = d
 
 const getTrue= (obj)=> Object.keys(obj).filter(key => obj[key])
 export class InputChecks extends React.Component {
-    constructor({choices = [defaultGroup, "synbio"], defaultChoice = defaultGroup, onCheck}) {
+    constructor({choices = [defaultGroup], defaultChoice = defaultGroup, onCheck}) {
         super();
         const st = {}
         choices.forEach(c => st[c] = false);

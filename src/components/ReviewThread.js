@@ -22,7 +22,7 @@ const flam_button = {
 }
 
 
-const defaultGroup = "alpha_testers"
+const defaultGroup = "alpha_go"
 
 export function InputChoice({choices = [defaultGroup], defaultChoice = defaultGroup, handleClick}) {
     const [value, setValue] = useState("")
@@ -49,7 +49,7 @@ export default function ReviewThread({review, user, fullPreview = true}) {
     const [isPreview, setIsPreview] = useState(fullPreview)
     const totalcomments = countNested(review, 'comments');
     return <React.Fragment>
-        <div key={review.id} className="textbubbles">
+        <div key={review.id} className="textbubbles" style={!isPreview ? {background: "#fbfb23"} : {background: null} }>
             <button className="nametag" onClick={() => setIsPreview(!isPreview)}>{review.author.name}</button>
             <DeleteX review={review} user={user} />
             <span>{String.fromCodePoint(review.emoji) || ""}</span>
@@ -69,7 +69,7 @@ export default function ReviewThread({review, user, fullPreview = true}) {
                     </span>
                     {review.description}
                     </span>
-                    <span style={subtle_button}> {review.groups.map(g => <div>{"@" + g.name + " "}</div>)}</span>
+                    <span style={subtle_button}> {review.groups.map(g => <div key={g.id}>{"@" + g.name + " "}</div>)}</span>
                     <Commenter targetId={review.id}/>
                     <span style={review.comments.length > 0 ? flam_button : subtle_button}
                           onClick={() => setExpanded(!expanded)}>
@@ -77,7 +77,7 @@ export default function ReviewThread({review, user, fullPreview = true}) {
                     </span>
                 </div>
 
-                {expanded && review.comments.map(comment => <React.Fragment>
+                {expanded && review.comments.map(comment => <div key={comment.id}>
                         <div className="comment" key={comment.id}>
                             <Comment review={comment} user={user}/>
                             <Commenter targetId={comment.id} text={'Reply'}/>
@@ -88,7 +88,7 @@ export default function ReviewThread({review, user, fullPreview = true}) {
                             </div>
                         )}
                         <br/>
-                    </React.Fragment>
+                    </div>
                 )}
             </React.Fragment>}
         </div>
@@ -126,7 +126,7 @@ export function Commenter({targetId, text = "Comment"}) {
 
 const DeleteX = ({user, review}) => (user.id === review.author.id
     && <span onClick={() => deleteReview(review.id)}
-             style={{cursor: "pointer", color: "red", fontSize: "0.6rem", fontWeight: "bolder"}}>
+             style={{cursor: "pointer", color: "red", fontSize: "0.9rem", fontWeight: "bolder"}}>
             {"   X   "}
             </span>)
 

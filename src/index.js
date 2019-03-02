@@ -30,6 +30,7 @@ chrome.runtime.sendMessage({user: true}, function(response) {
 //for registering / logout transission
 
 auth.onAuthStateChanged(user => ReactDOM.render(<Popup user={user}/>, document.getElementById('root')))
+// auth.onAuthStateChanged(user => console.log("user in index.js", user, "getidtoken", user.getIdToken))
 
 /*auth.onAuthStateChanged(async (user) =>  {
     const lupa_user = await getUser(user.uid);

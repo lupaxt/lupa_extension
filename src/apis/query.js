@@ -1,6 +1,6 @@
 // import {gql} from "apollo-boost";
 import gql from 'graphql-tag';
-import gqlRequest from "../components/gqlRequest";
+import gqlRequest from "../gqlRequest";
 
 
 //TODO figure out how graphql ...fragments work

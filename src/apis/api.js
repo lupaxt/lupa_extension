@@ -1,28 +1,54 @@
 import axios from 'axios'
-import {auth} from './Authentication/firebase'
+import {auth} from '../Authentication/firebase'
+import firebase from "firebase/app";
 
 
 const root = "https://wizdomx.herokuapp.com/";
 let idToken = "notoken";
 
-const api = {
-    fiba: {
-        signOut: () => auth.signOut(),
+/*fiba: {
+    signOut: () => auth.signOut(),
         loginUser: ({userEmail, password}) => auth.signInWithEmailAndPassword(userEmail, password)
-            .catch(error => console.log("Error FROM login", error)),
+        .catch(error => console.log("Error FROM login", error)),
 
 
         createUser: ({userEmail, password}) => auth.createUserWithEmailAndPassword(userEmail, password)
-            .then(authUser => {
-                console.log('auth user', authUser)
-                const firebaseUID = authUser.uid;
-                // return saveUserBackend({userEmail, firebaseUID})
-                //     .catch(err => "User was created in Firebase but not in our backend")
-            })
-            .catch(err => console.log(err, " from update profile")),
-    },
+        .then(authUser => {
+            console.log('auth user', authUser)
+            const firebaseUID = authUser.uid;
+            // return saveUserBackend({userEmail, firebaseUID})
+            //     .catch(err => "User was created in Firebase but not in our backend")
+        })
+        .catch(err => console.log(err, " from update profile")),*/
+const api = {
+    getIdToken: () => firebase.auth().getIdToken,
+    signOut: () => firebase.auth().signOut(),
+    signIn: (username, password) =>
+        firebase.auth().signInWithEmailAndPassword(username, password),
+    register: (username, password) =>
+        new Promise(function (resolve, reject) {
+            return firebase
+                .auth()
+                .createUserWithEmailAndPassword(username, password)
+                .then(response => {
+                    resolve(response.user);
+                    firebase.auth().currentUser.sendEmailVerification();
+                })
+                .catch(error => {
+                    reject(error);
+                    throw error;
+                });
+        }),
+
+    resendEmailVerification: () =>
+        firebase.auth().currentUser.sendEmailVerification(),
+    sendPasswordResetEmail: email => firebase.auth().sendPasswordResetEmail(email),
     set: {
-        saveUserBackend: ({userEmail, firebaseUID, handle}) => post(root + 'create/user', {userEmail, firebaseUID, handle}),
+        saveUserBackend: ({userEmail, firebaseUID, handle}) => post(root + 'create/user', {
+            userEmail,
+            firebaseUID,
+            handle
+        }),
         docInfo: (url, titleOnly = true) => post(root + 'parse/alt', {url, titleOnly}),
         handle: ({handle, firebaseUID = auth.currentUser.uid}) => post(root + 'create/handle', {handle, firebaseUID}),
         review: (review = reviewEx) => post(root + 'reviews/save/', review),
@@ -31,7 +57,7 @@ const api = {
     get: {
         handle: (handle) => get(`${root}handle/${handle}`),
         allReviews: (groups = []) => get(root + 'reviews/all'),
-        reviewsWithKeyValuePair:(kvp) => post(root + 'reviews/kvp', kvp),
+        reviewsWithKeyValuePair: (kvp) => post(root + 'reviews/kvp', kvp),
         joinGroup: ({groupID, firebaseUID = auth.currentUser.uid}) => post(root + 'groups/join', {
             firebaseUID,
             groupID
@@ -97,7 +123,6 @@ const post = function (url, data = {}, idToken = idToken) {
             throw err
         })
 };
-
 
 
 //make standardWrapper Promise for catch and then
